@@ -1,0 +1,67 @@
+version: "3"
+services:
+  # APIの詳細
+  api:
+    container_name: dotart_api
+    links:
+      - mysql
+    build:
+      context: .
+      dockerfile: ./Api/Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./Api:/go/src/api
+    depends_on: # apiサーバーはdbサーバーが立ってから起動
+      - mysql
+    networks:
+      - app_net
+
+  # db
+  mysql:
+    container_name: dotart_db
+    image: mysql:8.0
+    restart: always
+    environment:
+      # ユーザ情報設定
+      MYSQL_ROOT_PASSWORD: testtest
+      MYSQL_DATABASE: dotart
+      MYSQL_USER: team_a
+      MYSQL_PASSWORD: testtest
+      # タイムゾーン設定
+      TZ: "Asia/Tokyo"
+    #Windowsの弊害予防
+    user: "1000:1000"
+    ports:
+      - "3306:3306"
+    volumes:
+      # 永続化するときにマウントする
+      - ./db/mysql_data:/var/lib/mysql
+      # コンテナ設定
+      - ./db/mysql_conf/:/etc/mysql/conf.d
+    # mbind: Operation not permitted修正
+    security_opt:
+      - seccomp:unconfined
+    networks:
+      - app_net
+
+  phpmyadmin:
+    container_name: dotart_phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_USER=team_a
+      - PMA_PASSWORD=testtest
+    links:
+      - mysql
+    ports:
+      - 4000:80
+    volumes:
+      - ./db/phpmyadmin/sessions:/sessions
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    driver: bridge
