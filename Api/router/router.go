@@ -40,11 +40,12 @@ func SetRoutes(db *gorm.DB) *gin.Engine {
 		AllowCredentials: true,
 		AllowOrigins: []string{
 			// localhost
-			constants.API_ENDPOINT,
-			constants.API_ENDPOINT_LOGIN,
-			constants.API_ENDPOINT_SNS,
-			constants.API_ENDPOINT_INFOMATION,
-			constants.API_ENDPOINT_CREATOR,
+			constants.API_DEFAULT,
+			//constants.API_ENDPOINT,
+			//constants.API_ENDPOINT_LOGIN,
+			//constants.API_ENDPOINT_SNS,
+			//constants.API_ENDPOINT_INFOMATION,
+			//constants.API_ENDPOINT_CREATOR,
 		},
 	}))
 

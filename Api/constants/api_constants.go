@@ -7,6 +7,7 @@ const (
 	API_VERSION string = "/v1"
 
 	// CROS ORIGIN
+	API_DEFAULT             string = "*"
 	api_local               string = "http://localhost:3000"
 	API_ENDPOINT            string = api_local //"*"
 	API_ENDPOINT_LOGIN      string = api_local + "/login"
