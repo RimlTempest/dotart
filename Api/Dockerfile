@@ -1,6 +1,6 @@
 FROM golang:latest
 
-COPY /Api/ /go/src/api
+COPY /api/ /go/src/api
 
 WORKDIR /go/src/api/
 
