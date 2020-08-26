@@ -1,0 +1,6 @@
+#mysql のデータ
+db/mysql_data/
+#phpmyadmin のログデータ
+db/phpmyadmin/
+.env
+Api/README.md
