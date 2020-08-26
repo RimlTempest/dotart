@@ -7,11 +7,11 @@ services:
       - mysql
     build:
       context: .
-      dockerfile: ./Api/Dockerfile
+      dockerfile: ./api/Dockerfile
     ports:
       - "8080:8080"
     volumes:
-      - ./Api:/go/src/api
+      - ./api:/go/src/api
     depends_on: # apiサーバーはdbサーバーが立ってから起動
       - mysql
     networks:
