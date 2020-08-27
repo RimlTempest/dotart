@@ -94,12 +94,13 @@ export default class CreatorPage extends Vue {
   saveCanvasMagnification: number = this.getMagnification //保存時の倍率
   colorPallet: string[] = this.getColorPallet
   canvasIndexData: number[] = this.getCanvasIndexData
-  canvas: any = null //イラストを描くキャンバス
-  context: any = null //↑のコンテキスト
-  saveCanvas: any = null //画像サイズ変更のためのキャンバス
-  saveContext: any = null //↑のコンテキスト
+  previewCanvas: HTMLCanvasElement | null = null //イラストを表示するキャンバス
+  previewCanvasCtx: CanvasRenderingContext2D | null = null //↑のコンテキスト
+  saveCanvas: HTMLCanvasElement | null = null //画像サイズ変更のためのキャンバス
+  saveCanvasCtx: CanvasRenderingContext2D | null = null //↑のコンテキスト
   maxMagnification = (384 / this.canvasRange) * 2 //画像サイズ変更の際の最大サイズを指定
-
+  canvasStyreSize: number = 334 //キャンバスの外見上のサイズ
+  //最初に選択されてるサイズ
   selectedSize: SelectedSize = {
     text:
       this.canvasRange * this.canvasMagnification +
@@ -116,14 +117,14 @@ export default class CreatorPage extends Vue {
   ]
 
   public mounted(): void {
-    this.canvas = document.querySelector('#resultcanvas')
-    this.context = this.canvas.getContext('2d')
-    this.canvas.style.width = 334 + 'px'
-    this.canvas.style.height = 334 + 'px'
-    this.canvas.style.border = '1px solid rgb(0,0,0)'
+    this.previewCanvas = document.querySelector('#resultcanvas')
+    this.previewCanvasCtx = this.previewCanvas!.getContext('2d')
+    this.previewCanvas!.style.width = this.canvasStyreSize + 'px'
+    this.previewCanvas!.style.height = this.canvasStyreSize + 'px'
+    this.previewCanvas!.style.border = '1px solid rgb(0,0,0)'
     this.saveCanvas = document.querySelector('#savecanvas')
-    this.saveContext = this.saveCanvas.getContext('2d')
-    this.draw(this.canvasRange, this.canvasMagnification, this.context)
+    this.saveCanvasCtx = this.saveCanvas!.getContext('2d')!
+    this.draw(this.canvasRange, this.canvasMagnification, this.previewCanvasCtx)
 
     //画像サイズのリスト生成
     //TODO: i = i * 2
@@ -176,21 +177,26 @@ export default class CreatorPage extends Vue {
   //選んだ倍率からドット絵を描画し、画像として保存する
   saveImage(): void {
     this.saveCanvasMagnification = this.selectedSize.magnification
-    this.saveCanvas.width = this.canvasRange * this.saveCanvasMagnification
-    this.saveCanvas.height = this.canvasRange * this.saveCanvasMagnification
+    this.saveCanvas!.width = this.canvasRange * this.saveCanvasMagnification
+    this.saveCanvas!.height = this.canvasRange * this.saveCanvasMagnification
     //画像を拡大するのではなく倍率を変えて再描画してるので画質の劣化はないと思う
-    this.draw(this.canvasRange, this.saveCanvasMagnification, this.saveContext)
-    if (this.saveCanvas.msToBlob) {
-      //ブラウザによってはないとこまるらしいです しらんけど・・・
-      const blob = this.saveCanvas.msToBlob()
-      window.navigator.msSaveBlob(blob, this.canvasName + '.png')
-    } else {
-      //画像データを対象にしたリンクを生成し、クリックしたことにする
-      const link = document.createElement('a')
-      link.href = this.saveCanvas.toDataURL('image/png')
-      link.download = this.canvasName + ':' + this.selectedSize.text + '.png'
-      link.click()
-    }
+    this.draw(
+      this.canvasRange,
+      this.saveCanvasMagnification,
+      this.saveCanvasCtx
+    )
+    //if (this.saveCanvas.msToBlob) {
+    //なんかIE11だとこれないと困るらしいけどHTMLCanvasElementだと書き方変わるみたいで困っちゃったねえ～
+    //ぶっちゃけこれから消される運命のブラウザなんて無視していいと思うんだけどおまえどう？
+    //  const blob = this.saveCanvas.msToBlob()
+    //  window.navigator.msSaveBlob(blob, this.canvasName + '.png')
+    //} else {
+    //画像データを対象にしたリンクを生成し、クリックしたことにする
+    const link = document.createElement('a')
+    link.href = this.saveCanvas!.toDataURL('image/png')!
+    link.download = this.canvasName + ':' + this.selectedSize.text + '.png'
+    link.click()
+    //}
   }
 }
 </script>
