@@ -19,6 +19,10 @@ backend(Go & gin)
 - Hash
 - kimu
 
-`TODO`の管理は`issue`でやりますので確認は`issue`でお願いします。
+## 運用
 
 [コミットメッセージについて](https://github.com/RimlTempest/dotart/wiki/%E3%82%B3%E3%83%9F%E3%83%83%E3%83%88%E3%83%A1%E3%83%83%E3%82%BB%E3%83%BC%E3%82%B8%E3%83%AB%E3%83%BC%E3%83%AB)
+
+[ブランチルール](https://github.com/RimlTempest/dotart/wiki/Git%E3%83%96%E3%83%A9%E3%83%B3%E3%83%81%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)
+
+`TODO`の管理は`issue`でやりますので確認は`issue`でお願いします。
