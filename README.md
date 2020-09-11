@@ -21,4 +21,4 @@ backend(Go & gin)
 
 `TODO`の管理は`issue`でやりますので確認は`issue`でお願いします。
 
-[コミットメッセージについて](https://github.com/RimlTempest/dotart.wiki.git)
+[コミットメッセージについて](https://github.com/RimlTempest/dotart/wiki/%E3%82%B3%E3%83%9F%E3%83%83%E3%83%88%E3%83%A1%E3%83%83%E3%82%BB%E3%83%BC%E3%82%B8%E3%83%AB%E3%83%BC%E3%83%AB)
