@@ -106,8 +106,8 @@ export default class CanvasPage extends Vue {
   pointed: Pointed = { X: 0, Y: 0 } //現在のグリッド座標
   beforePointed: Pointed = { X: 0, Y: 0 } //一個前のグリッド座標
   colorPallet: string[] = this.Getcolorpallet //パレットの色
-  selectingColor: string = this.colorPallet[1] //選択中の色
-  palletIndex: number = 1 //選択中の色のパレットにおける順番
+  palletIndex: number = 1 //選択中の色のパレットにおける順番　初期値は2番目
+  selectingColor: string = this.colorPallet[this.palletIndex] //選択中の色
   canvasIndexData: number[] = this.Getcanvasindexdata //キャンバスに塗られている色の保存領域
   stackMaxSize: number = 100 //巻き戻し可能な最大回数の設定
   undoDataStack: Stack[] = [] //巻き戻しに使う画面データ
@@ -124,7 +124,10 @@ export default class CanvasPage extends Vue {
   canvasMagnification: number = this.Getmagnification // 表示倍率
   canvasRange: number = this.Getrange // キャンバス横幅.縦幅
   canvasStyreSize: number = 334 //キャンバスの外見上のサイズ
-  canvasSizeMagnification: number = 0.87 //外見上のサイズと整合性つけるための数字
+  canvasSizeMagnification: number = 0.87 //キャンパスの表示倍率　外見上のサイズと整合性つけるため必要
+
+  //引数 coorX, coorY = キャンバス内のマウスのXY座標
+  //引数 cellX, cellY = ↑から出したグリッドの座標
 
   handleTouchMove(event: UIEvent) {
     event.preventDefault()
@@ -352,7 +355,7 @@ export default class CanvasPage extends Vue {
     if (color == this.palletIndex) {
       return
     }
-    //クリックした場所と違う色に当たるか画面は時に到達まで上下左右に走査し続ける
+    //クリックした場所と違う色に当たるか画面端に到達するまで上下左右に走査し続ける
     if (cellX >= this.canvasRange || cellX < 0) return
     if (cellY >= this.canvasRange || cellY < 0) return
     if (this.canvasIndexData[cellY * this.canvasRange + cellX] === color) {

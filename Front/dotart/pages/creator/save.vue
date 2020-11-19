@@ -5,12 +5,7 @@
         <v-row dense>
           <v-col cols="12">
             <div class="ResultCanvas">
-              <canvas
-                class="resultcanvas"
-                id="resultcanvas"
-                width="384px"
-                height="384px"
-              ></canvas>
+              <canvas class="resultcanvas" id="resultcanvas" width="384px" height="384px"></canvas>
             </div>
           </v-col>
         </v-row>
@@ -35,12 +30,7 @@
               <v-form ref="form" lazy-validation>
                 <v-card-title class="headline">画像サイズ指定</v-card-title>
                 <v-card-subtitle>保存するサイズを指定できます</v-card-subtitle>
-                <v-select
-                  v-model="selectedSize"
-                  :items="sizeListItems"
-                  label="画像サイズ"
-                  return-object
-                ></v-select>
+                <v-select v-model="selectedSize" :items="sizeListItems" label="画像サイズ" return-object></v-select>
                 <v-card-actions>
                   <v-spacer />
                   <v-btn color="primary" @click="saveImage">保存</v-btn>
@@ -134,7 +124,6 @@ export default class CreatorPage extends Vue {
         magnification: i
       })
     }
-
     this.sizeListItems.push({
       text:
         this.canvasRange * this.canvasMagnification +
@@ -143,6 +132,7 @@ export default class CreatorPage extends Vue {
       magnification: this.canvasMagnification
     })
 
+    //並べ替え
     this.sizeListItems.sort(function(
       a: SizeListItems,
       b: SizeListItems
