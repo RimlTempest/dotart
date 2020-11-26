@@ -208,7 +208,8 @@ export default class CreatorPage extends Vue {
   display: flex;
   width: 20px;
   height: 20px;
-  border: 1px solid rgb(0, 0, 0);
+  border: 2px solid rgb(50, 50, 50);
   pointer-events: none;
+  border-radius: 30%;
 }
 </style>
