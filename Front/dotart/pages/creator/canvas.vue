@@ -52,16 +52,11 @@
           </v-col>
         </v-row>
 
-        <v-row dense class="palletarea">
-          <v-layout justify-center>
-            <pallet
-              v-for="item in colorPallet"
-              :key="item"
-              :color="item"
-              @getcolor="getpalletcolor"
-            ></pallet>
-          </v-layout>
-        </v-row>
+        <palletArea
+          :colorPallet="colorPallet"
+          :pfirstPalletIndex="palletIndex"
+          @getpalletcolor="getpalletcolor"
+        ></palletArea>
       </v-container>
     </v-flex>
   </v-layout>
@@ -70,7 +65,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { canvasDataModule } from '../../store/modules/canvasData'
-import pallet from '@/components/canvas/pallet.vue'
+import palletArea from '@/components/canvas/palletArea.vue'
 
 type Pointed = {
   X: number
@@ -84,7 +79,7 @@ type Stack = {
 @Component({
   middleware: 'auth',
   components: {
-    pallet
+    palletArea
   }
 })
 
@@ -156,9 +151,9 @@ export default class CanvasPage extends Vue {
 
   //メソッド
   //クリックしたパレットの色を取得
-  getpalletcolor(newValue: string): void {
-    this.selectingColor = newValue
-    this.palletIndex = this.colorPallet.indexOf(this.selectingColor)
+  getpalletcolor(newColor: string, newIndex: number): void {
+    this.selectingColor = newColor
+    this.palletIndex = newIndex
   }
   //ペンのモードチェンジ
   modeChange(): void {
@@ -496,9 +491,5 @@ export default class CanvasPage extends Vue {
   opacity: 0.5;
   top: 0px;
   left: 0px;
-}
-.palletarea {
-  display: flex;
-  justify-content: space-between;
 }
 </style>
