@@ -32,12 +32,20 @@
           </v-col>
           <v-col cols="2">
             <div>
-              <button v-on:click="undo">←</button>
+              <button v-on:click="undo">
+                <icon-Base width="36" height="36" icon-name="undoIcon"
+                  ><undoIcon
+                /></icon-Base>
+              </button>
             </div>
           </v-col>
           <v-col cols="2">
             <div>
-              <button v-on:click="redo">→</button>
+              <button v-on:click="redo">
+                <icon-Base width="36" height="36" icon-name="redoIcon"
+                  ><redoIcon
+                /></icon-Base>
+              </button>
             </div>
           </v-col>
           <v-col cols="2">
@@ -65,21 +73,20 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { canvasDataModule } from '../../store/modules/canvasData'
-import palletArea from '@/components/canvas/palletArea.vue'
-
-type Pointed = {
-  X: number
-  Y: number
-}
-
-type Stack = {
-  indexData: number[]
-}
+import palletArea from '@/components/molecules/palletArea.vue'
+import redoIcon from '@/components/atomics/icons/redoIcon.vue'
+import undoIcon from '@/components/atomics/icons/undoIcon.vue'
+import iconBase from '@/components/atomics/icons/iconBase.vue'
+import { Pointed } from '../../types/canvasPointed'
+import { Stack } from '../../types/canvasStack'
 
 @Component({
   middleware: 'auth',
   components: {
-    palletArea
+    palletArea,
+    redoIcon,
+    undoIcon,
+    iconBase
   }
 })
 
