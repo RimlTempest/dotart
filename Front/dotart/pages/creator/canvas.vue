@@ -9,8 +9,8 @@
               <div class="GridCanvas">
                 <canvas
                   id="gridcanvas"
-                  width="384px"
-                  height="384px"
+                  width="383px"
+                  height="383px"
                   @mousedown="click"
                   @mouseup="dragEnd"
                   @mouseout="dragEnd"
@@ -447,18 +447,18 @@ export default class CanvasPage extends Vue {
       //グリッドの描画
       // 縦線
       for (var i = 1; i < this.canvasRange + 1; i++) {
-        this.gridCanvasCtx!.moveTo(i * this.canvasMagnification + 0.5, 0.5)
+        this.gridCanvasCtx!.moveTo(i * this.canvasMagnification - 0.5, -0.5)
         this.gridCanvasCtx!.lineTo(
-          i * this.canvasMagnification + 0.5,
-          this.canvasRange * this.canvasMagnification + 0.5
+          i * this.canvasMagnification - 0.5,
+          this.canvasRange * this.canvasMagnification - 0.5
         )
       }
       // 横線
       for (var i = 1; i < this.canvasRange + 1; i++) {
-        this.gridCanvasCtx!.moveTo(0.5, i * this.canvasMagnification + 0.5)
+        this.gridCanvasCtx!.moveTo(-0.5, i * this.canvasMagnification - 0.5)
         this.gridCanvasCtx!.lineTo(
-          this.canvasRange * this.canvasMagnification + 0.5,
-          i * this.canvasMagnification + 0.5
+          this.canvasRange * this.canvasMagnification - 0.5,
+          i * this.canvasMagnification - 0.5
         )
       }
       //描画
