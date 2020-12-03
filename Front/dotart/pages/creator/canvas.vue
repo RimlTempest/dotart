@@ -118,23 +118,30 @@ export default class CanvasPage extends Vue {
   canvasStyreSize: number = 334 //キャンバスの外見上のサイズ
   canvasSizeMagnification: number = 0.87 //キャンパスの表示倍率　外見上のサイズと整合性つけるため必要
 
-  //引数 coorX, coorY = キャンバス内のマウスのXY座標
-  //引数 cellX, cellY = ↑から出したグリッドの座標
-
   handleTouchMove(event: UIEvent) {
     event.preventDefault()
   }
   public mounted(): void {
     //ページが立ち上がる時の処理
+    //canvasのコンテキスト取得(絵を描く領域)
     this.canvas = document.querySelector('#drowcanvas')
     this.canvasCtx = this.canvas!.getContext('2d')
     //サイズ変更、枠線の追加
     this.canvas!.style.width = this.canvasStyreSize + 'px'
     this.canvas!.style.height = this.canvasStyreSize + 'px'
     this.canvas!.style.border = '1px solid rgb(0,0,0)'
+    //canvasのコンテキスト取得(グリッドの領域)
+    this.gridCanvas = document.querySelector('#gridcanvas')
+    this.gridCanvasCtx = this.gridCanvas!.getContext('2d')
+    //サイズの変更、枠線の追加
+    this.gridCanvas!.style.width = this.canvasStyreSize + 'px'
+    this.gridCanvas!.style.height = this.canvasStyreSize + 'px'
+    this.gridCanvas!.style.border = '1px solid rgb(0, 0, 0)'
+
     //初期色での塗りつぶし、グリッドの描画
     this.redraw(this.canvasIndexData)
     this.drawGrid()
+
     // スマホでのタッチ操作でのスクロール禁止
     document.addEventListener('touchmove', this.handleTouchMove, {
       passive: false
@@ -142,16 +149,23 @@ export default class CanvasPage extends Vue {
     this.pageActive = true
   }
   public beforeDestroy(): void {
-    // コンポーネントが破棄される直前の処理　スマホでのタッチ操作でのスクロール解禁
+    //コンポーネントが破棄される直前の処理
+    //スマホでのタッチ操作でのスクロール禁止を解除
     document.removeEventListener('touchmove', this.handleTouchMove)
   }
 
-  //メソッド
+  /*
+  メソッド
+  引数 coorX, coorY = キャンバス内のマウスのXY座標
+  引数 cellX, cellY = ↑から出したグリッドの座標
+  */
+
   //クリックしたパレットの色を取得
   getpalletcolor(newColor: string, newIndex: number): void {
     this.selectingColor = newColor
     this.palletIndex = newIndex
   }
+
   //ペンのモードチェンジ
   modeChange(): void {
     if (this.penMode == 'pen') {
@@ -160,6 +174,7 @@ export default class CanvasPage extends Vue {
       this.penMode = 'pen'
     }
   }
+
   // マウス移動時の座標取得(mousemove)
   drag(e: any): void {
     if (!this.pageActive) {
@@ -228,6 +243,7 @@ export default class CanvasPage extends Vue {
         this.drawFill(this.pointed['X'], this.pointed['Y'])
     }
   }
+
   //タッチしたとき（touchstart）
   touch(e: any): void {
     if (!this.pageActive) {
@@ -402,31 +418,25 @@ export default class CanvasPage extends Vue {
 
   //渡されたcanvasのindexdataからドット絵を再描画する
   redraw(indexData: number[]): void {
-    for (var i = 0; i < this.canvasRange; i++) {
-      for (var j = 0; j < this.canvasRange; j++) {
+    for (var x = 0; x < this.canvasRange; x++) {
+      for (var y = 0; y < this.canvasRange; y++) {
         this.canvasCtx!.fillStyle = this.colorPallet[
-          indexData[j * this.canvasRange + i]
+          indexData[y * this.canvasRange + x]
         ]
         this.canvasCtx!.fillRect(
-          i * this.canvasMagnification,
-          j * this.canvasMagnification,
+          x * this.canvasMagnification,
+          y * this.canvasMagnification,
           this.canvasMagnification,
           this.canvasMagnification
         )
-        this.canvasIndexData[j * this.canvasRange + i] =
-          indexData[j * this.canvasRange + i]
+        this.canvasIndexData[y * this.canvasRange + x] =
+          indexData[y * this.canvasRange + x]
       }
     }
   }
 
   //グリッドのON、OFF
   drawGrid(): void {
-    this.gridCanvas = document.querySelector('#gridcanvas')
-    this.gridCanvasCtx = this.gridCanvas!.getContext('2d')
-    //サイズの変更、枠線の追加
-    this.gridCanvas!.style.width = this.canvasStyreSize + 'px'
-    this.gridCanvas!.style.height = this.canvasStyreSize + 'px'
-    this.gridCanvas!.style.border = '1px solid rgb(0, 0, 0)'
     this.gridCanvasCtx!.beginPath()
     this.gridCanvasCtx!.globalCompositeOperation = 'source-over'
     // 線の色・幅
