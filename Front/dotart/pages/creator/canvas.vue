@@ -210,6 +210,10 @@ export default class CanvasPage extends Vue {
     this.beforePointed['Y'] = this.pointed['Y']
     this.pointed['X'] = Math.floor(coorX / this.canvasMagnification)
     this.pointed['Y'] = Math.floor(coorY / this.canvasMagnification)
+
+    if (!this.isDrag) {
+      return
+    }
     switch (this.penMode) {
       case 'pen':
         //なめらかな線を描画するためドラッグ時は直線で描く
