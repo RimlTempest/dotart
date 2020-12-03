@@ -257,8 +257,8 @@ export default class CanvasPage extends Vue {
     this.beforeDraw() //undoの準備
     //タッチした座標の取得
     this.rect = this.canvas!.getBoundingClientRect()
-    var x = (e.touches[0].pageX - this.rect.left) / 0.87
-    var y = (e.touches[0].pageY - this.rect.top) / 0.87
+    var x = (e.touches[0].pageX - this.rect.left) / this.canvasSizeMagnification
+    var y = (e.touches[0].pageY - this.rect.top) / this.canvasSizeMagnification
     //マウスムーブによる座標の獲得がないので、ここでpointed等を更新する
     this.beforePointed['X'] = this.pointed['X']
     this.beforePointed['Y'] = this.pointed['Y']
