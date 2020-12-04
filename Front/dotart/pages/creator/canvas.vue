@@ -68,7 +68,7 @@ import { canvasDataModule } from '../../store/modules/canvasData'
 import palletArea from '@/components/molecules/palletArea.vue'
 import undoButton from '@/components/atomics/undoButton.vue'
 import redoButton from '@/components/atomics/redoButton.vue'
-import { Pointed } from '../../types/canvasPointed'
+import { Point } from '../../types/canvasPoint'
 import { Stack } from '../../types/canvasStack'
 
 @Component({
@@ -95,15 +95,15 @@ export default class CanvasPage extends Vue {
     return canvasDataModule.canvasIndexData
   }
 
-  pointed: Pointed = { X: 0, Y: 0 } //現在のグリッド座標
-  beforePointed: Pointed = { X: 0, Y: 0 } //一個前のグリッド座標
+  pointed: Point = { X: 0, Y: 0 } //現在のグリッド座標
+  beforePointed: Point = { X: 0, Y: 0 } //一個前のグリッド座標
   colorPallet: string[] = this.Getcolorpallet //パレットの色
   palletIndex: number = 1 //選択中の色のパレットにおける順番　初期値は2番目
   selectingColor: string = this.colorPallet[this.palletIndex] //選択中の色
   canvasIndexData: number[] = this.Getcanvasindexdata //キャンバスに塗られている色の保存領域
   stackMaxSize: number = 100 //巻き戻し可能な最大回数の設定
-  undoDataStack: Stack[] = [] //巻き戻しに使う画面データ
-  redoDataStack: Stack[] = [] //やり直しに使う画面データ
+  undoRedoDataStack: Stack[] = [] //undo,redoに使う画面データの配列
+  undoRedoDataIndex: number = -1 //↑の、「現在表示している画面のデータ」が格納されている部分の添え字を示す
   canvas: HTMLCanvasElement | null = null //イラストを描くキャンバス
   canvasCtx: CanvasRenderingContext2D | null = null //↑のコンテキスト
   gridCanvas: HTMLCanvasElement | null = null //グリッド線が描かれたキャンバス
@@ -138,9 +138,10 @@ export default class CanvasPage extends Vue {
     this.gridCanvas!.style.height = this.canvasStyreSize + 'px'
     this.gridCanvas!.style.border = '1px solid rgb(0, 0, 0)'
 
-    //初期色での塗りつぶし、グリッドの描画
+    //初期色での塗りつぶし、グリッドの描画、undo,redo用配列に追加
     this.redraw(this.canvasIndexData)
     this.drawGrid()
+    this.afterDraw()
 
     // スマホでのタッチ操作でのスクロール禁止
     document.addEventListener('touchmove', this.handleTouchMove, {
@@ -184,7 +185,10 @@ export default class CanvasPage extends Vue {
     //キャンバス内におけるXY座標を取得
     var x = (e.clientX - this.rect.left) / this.canvasSizeMagnification
     var y = (e.clientY - this.rect.top) / this.canvasSizeMagnification
-    this.drowing(x, y)
+    //TODO:関数化
+    if (this.isDrag) {
+      this.drowing(x, y)
+    }
   }
 
   //スワイプ時の座標取得(touchmove)
@@ -225,7 +229,7 @@ export default class CanvasPage extends Vue {
         )
         break
       case 'bucket':
-        //バケツ中にドラッグしても何も起きない
+        //FIXME: バケツ中にドラッグしても何も起きない
         break
     }
   }
@@ -236,7 +240,6 @@ export default class CanvasPage extends Vue {
       return
     }
     this.isDrag = true
-    this.beforeDraw() //undoの準備
 
     //ペンモードによって処理の変更
     switch (this.penMode) {
@@ -254,7 +257,6 @@ export default class CanvasPage extends Vue {
       return
     }
     this.isDrag = true
-    this.beforeDraw() //undoの準備
     //タッチした座標の取得
     this.rect = this.canvas!.getBoundingClientRect()
     var x = (e.touches[0].pageX - this.rect.left) / this.canvasSizeMagnification
@@ -279,6 +281,9 @@ export default class CanvasPage extends Vue {
     if (!this.pageActive) {
       return
     }
+    //描画を行っていたときのみ動かす
+    if (!this.isDrag) return
+    this.afterDraw() //undo,redo用配列を追加
     this.canvasCtx!.closePath()
     this.isDrag = false
   }
@@ -361,6 +366,7 @@ export default class CanvasPage extends Vue {
     //再帰処理を読んで走査
     this.f(cellX, cellY, color)
   }
+
   //塗りつぶしの再帰処理
   f(cellX: number, cellY: number, color: number): void {
     //今の選択中の色と同じならキャンセル
@@ -380,44 +386,41 @@ export default class CanvasPage extends Vue {
   }
 
   //クリック時に最初に行う処理　やり直しのためのデータを処理する
-  beforeDraw(): void {
-    // やり直し用スタックの中身を削除
-    this.redoDataStack = []
-    // 元に戻す用の配列が最大保持数より大きくなっているかどうか
-    if (this.undoDataStack.length >= this.stackMaxSize) {
-      // 条件に該当する場合末尾の要素を削除
-      this.undoDataStack.pop()
+  afterDraw(): void {
+    //やり直しをした後だった場合、現在の表示内容以降のデータは削除
+    if (this.undoRedoDataIndex < this.undoRedoDataStack.length - 1) {
+      this.undoRedoDataStack.splice(this.undoRedoDataIndex + 1)
     }
-    // 元に戻す配列の先頭にデータを保持する
-    this.undoDataStack.unshift({
+    //巻き戻し最大回数より多かったら先頭を削除、そうでなければ追加
+    if (this.undoRedoDataIndex >= this.stackMaxSize) {
+      this.undoRedoDataStack.shift()
+    } else {
+      ++this.undoRedoDataIndex
+    }
+    //データのプッシュ
+    this.undoRedoDataStack.push({
       indexData: this.canvasIndexData.slice()
     })
   }
 
   //やり直し(undo)
   undo(): void {
-    // データがなければ処理を終了する
-    if (this.undoDataStack.length <= 0) return
-    // やり直し用の配列に元に戻す操作をする前のデータをスタックしておく
-    this.redoDataStack.unshift({
-      indexData: this.canvasIndexData.slice()
-    })
-    // 元に戻す配列の先頭からデータを取得
-    var imageData: number[] = this.undoDataStack.shift()!.indexData
-    this.redraw(imageData)
+    //現在の表示内容が配列の先頭であれば処理を終了する
+    if (this.undoRedoDataIndex <= 0) {
+      return
+    }
+    //現在の表示内容の添え字をデクリメントし、それをもとにindexDataを取得して再描画
+    this.redraw(this.undoRedoDataStack[--this.undoRedoDataIndex].indexData)
   }
 
   //やり直しの取り消し(redo)
   redo(): void {
-    // データがなければ処理を終了する
-    if (this.redoDataStack.length <= 0) return
-    // 元に戻す用の配列にやり直し操作をする前のデータをスタックしておく
-    this.undoDataStack.unshift({
-      indexData: this.canvasIndexData!.slice()
-    })
-    // やり直す配列の先頭からデータを取得
-    var imageData: number[] = this.redoDataStack.shift()!.indexData
-    this.redraw(imageData)
+    //現在の表示内容が配列の末尾であれば処理を終了する
+    if (this.undoRedoDataIndex >= this.undoRedoDataStack.length - 1) {
+      return
+    }
+    //現在の表示内容の添え字をインクリメントし、それをもとにindexDataを取得して再描画
+    this.redraw(this.undoRedoDataStack[++this.undoRedoDataIndex].indexData)
   }
 
   //渡されたcanvasのindexdataからドット絵を再描画する
