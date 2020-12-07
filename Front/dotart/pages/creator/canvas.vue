@@ -183,8 +183,8 @@ export default class CanvasPage extends Vue {
     }
     this.rect = this.canvas!.getBoundingClientRect()
     //キャンバス内におけるXY座標を取得
-    var x = (e.clientX - this.rect.left) / this.canvasSizeMagnification
-    var y = (e.clientY - this.rect.top) / this.canvasSizeMagnification
+    let x = (e.clientX - this.rect.left) / this.canvasSizeMagnification
+    let y = (e.clientY - this.rect.top) / this.canvasSizeMagnification
     //TODO:関数化
     if (this.isDrag) {
       this.drowing(x, y)
@@ -198,8 +198,8 @@ export default class CanvasPage extends Vue {
     }
     this.rect = this.canvas!.getBoundingClientRect()
     //キャンバス内におけるXY座標を取得
-    var x = (e.touches[0].pageX - this.rect.left) / this.canvasSizeMagnification
-    var y = (e.touches[0].pageY - this.rect.top) / this.canvasSizeMagnification
+    let x = (e.touches[0].pageX - this.rect.left) / this.canvasSizeMagnification
+    let y = (e.touches[0].pageY - this.rect.top) / this.canvasSizeMagnification
     this.drowing(x, y)
   }
 
@@ -259,8 +259,8 @@ export default class CanvasPage extends Vue {
     this.isDrag = true
     //タッチした座標の取得
     this.rect = this.canvas!.getBoundingClientRect()
-    var x = (e.touches[0].pageX - this.rect.left) / this.canvasSizeMagnification
-    var y = (e.touches[0].pageY - this.rect.top) / this.canvasSizeMagnification
+    let x = (e.touches[0].pageX - this.rect.left) / this.canvasSizeMagnification
+    let y = (e.touches[0].pageY - this.rect.top) / this.canvasSizeMagnification
     //マウスムーブによる座標の獲得がないので、ここでpointed等を更新する
     this.beforePointed['X'] = this.pointed['X']
     this.beforePointed['Y'] = this.pointed['Y']
@@ -296,42 +296,42 @@ export default class CanvasPage extends Vue {
     coorY1: number,
     coorY2: number
   ): void {
-    let Xdif = Math.abs(coorX1 - coorX2), //X方向の移動距離の絶対値
-      Ydif = Math.abs(coorY1 - coorY2), //Y方向の移動距離の絶対値
-      Xdif2 = Xdif * 2,
-      Ydif2 = Ydif * 2,
+    let xdiff = Math.abs(coorX1 - coorX2), //X方向の移動距離の絶対値
+      ydiff = Math.abs(coorY1 - coorY2), //Y方向の移動距離の絶対値
+      xdiff2 = xdiff * 2,
+      ydiff2 = ydiff * 2,
       Xvek = coorX2 > coorX1 ? 1 : -1, //X方向のベクトル
       Yvek = coorY2 > coorY1 ? 1 : -1, //Y方向のベクトル
       x = coorX1,
       y = coorY1
-    if (Xdif >= Ydif) {
+    if (xdiff >= ydiff) {
       //Xに何マス進んだらY方向に1進むか計算し、そこから直線を描画する
-      let e = -Xdif
-      for (let i = 0; i <= Xdif; i++) {
+      let e = -xdiff
+      for (let i = 0; i <= xdiff; i++) {
         if (x < 0 || x >= this.canvasRange || y < 0 || y >= this.canvasRange)
           break
 
         this.drawdot(x, y)
         x += Xvek //Xが1進む
-        e += Ydif2
+        e += ydiff2
         if (e >= 0) {
           y += Yvek //Yが1進む
-          e -= Xdif2 //割り切れない場合を考え端数は切り捨てない
+          e -= xdiff2 //割り切れない場合を考え端数は切り捨てない
         }
       }
     } else {
       //上と同様
-      let e = -Ydif
-      for (let i = 0; i <= Ydif; i++) {
+      let e = -ydiff
+      for (let i = 0; i <= ydiff; i++) {
         if (x < 0 || x >= this.canvasRange || y < 0 || y >= this.canvasRange)
           break
 
         this.drawdot(x, y)
         y += Yvek
-        e += Xdif2
+        e += xdiff2
         if (e >= 0) {
           x += Xvek
-          e -= Ydif2
+          e -= ydiff2
         }
       }
     }
@@ -358,7 +358,7 @@ export default class CanvasPage extends Vue {
   //引数は座標から出したドットのマス目の位置
   drawFill(cellX: number, cellY: number): void {
     //クリックした位置の色のindexを取得
-    var color = this.canvasIndexData[cellY * this.canvasRange + cellX]
+    let color = this.canvasIndexData[cellY * this.canvasRange + cellX]
     //今の選択中の色と同じならキャンセル
     if (color == this.palletIndex) {
       return
@@ -425,8 +425,8 @@ export default class CanvasPage extends Vue {
 
   //渡されたcanvasのindexdataからドット絵を再描画する
   redraw(indexData: number[]): void {
-    for (var x = 0; x < this.canvasRange; x++) {
-      for (var y = 0; y < this.canvasRange; y++) {
+    for (let x = 0; x < this.canvasRange; x++) {
+      for (let y = 0; y < this.canvasRange; y++) {
         this.canvasCtx!.fillStyle = this.colorPallet[
           indexData[y * this.canvasRange + x]
         ]
@@ -453,7 +453,7 @@ export default class CanvasPage extends Vue {
     if (this.isGrid == false) {
       //グリッドの描画
       // 縦線
-      for (var i = 1; i < this.canvasRange + 1; i++) {
+      for (let i = 1; i < this.canvasRange + 1; i++) {
         this.gridCanvasCtx!.moveTo(i * this.canvasMagnification - 0.5, -0.5)
         this.gridCanvasCtx!.lineTo(
           i * this.canvasMagnification - 0.5,
@@ -461,7 +461,7 @@ export default class CanvasPage extends Vue {
         )
       }
       // 横線
-      for (var i = 1; i < this.canvasRange + 1; i++) {
+      for (let i = 1; i < this.canvasRange + 1; i++) {
         this.gridCanvasCtx!.moveTo(-0.5, i * this.canvasMagnification - 0.5)
         this.gridCanvasCtx!.lineTo(
           this.canvasRange * this.canvasMagnification - 0.5,
