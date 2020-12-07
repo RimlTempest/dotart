@@ -157,15 +157,9 @@ export default class CanvasPage extends Vue {
 
   /*
   メソッド
-  引数 coorX, coorY = キャンバス内のマウスのXY座標
-  引数 cellX, cellY = ↑から出したグリッドの座標
+  引数 coor = キャンバス内のマウスのXY座標
+  引数 cell = ↑から出したグリッドの座標
   */
-
-  //クリックしたパレットの色を取得
-  getpalletcolor(newColor: string, newIndex: number): void {
-    this.selectingColor = newColor
-    this.palletIndex = newIndex
-  }
 
   //ペンのモードチェンジ
   modeChange(): void {
@@ -176,62 +170,30 @@ export default class CanvasPage extends Vue {
     }
   }
 
-  // マウス移動時の座標取得(mousemove)
-  drag(e: any): void {
-    if (!this.pageActive) {
-      return
-    }
-    this.rect = this.canvas!.getBoundingClientRect()
-    //キャンバス内におけるXY座標を取得
-    let x = (e.clientX - this.rect.left) / this.canvasSizeMagnification
-    let y = (e.clientY - this.rect.top) / this.canvasSizeMagnification
-    //TODO:関数化
-    if (this.isDrag) {
-      this.drowing(x, y)
-    }
+  //クリックしたパレットの色を取得
+  getpalletcolor(newColor: string, newIndex: number): void {
+    this.selectingColor = newColor
+    this.palletIndex = newIndex
   }
 
-  //スワイプ時の座標取得(touchmove)
-  swipe(e: any): void {
-    if (!this.pageActive) {
-      return
-    }
+  //クリック、タッチした位置のキャンパスにおけるXY座標を返す
+  //引数はマウスの座標
+  getPoint(wholeCoor: Point): Point {
     this.rect = this.canvas!.getBoundingClientRect()
-    //キャンバス内におけるXY座標を取得
-    let x = (e.touches[0].pageX - this.rect.left) / this.canvasSizeMagnification
-    let y = (e.touches[0].pageY - this.rect.top) / this.canvasSizeMagnification
-    this.drowing(x, y)
+    let coor: Point = {
+      X: (wholeCoor['X'] - this.rect.left) / this.canvasSizeMagnification,
+      Y: (wholeCoor['Y'] - this.rect.top) / this.canvasSizeMagnification
+    }
+    return coor
   }
 
-  //取得した座標から描画を行う
-  drowing(coorX: number, coorY: number): void {
-    if (!this.pageActive) {
-      return
-    }
-    //キャンバス内におけるXY座標を取得
-    //ドットのグリッド座標を取得
+  //クリックした位置でドットのグリッドでの現在地を更新する
+  //引数はキャンバスにおけるマウスの座標
+  getCell(coor: Point): void {
     this.beforePointed['X'] = this.pointed['X']
     this.beforePointed['Y'] = this.pointed['Y']
-    this.pointed['X'] = Math.floor(coorX / this.canvasMagnification)
-    this.pointed['Y'] = Math.floor(coorY / this.canvasMagnification)
-
-    if (!this.isDrag) {
-      return
-    }
-    switch (this.penMode) {
-      case 'pen':
-        //なめらかな線を描画するためドラッグ時は直線で描く
-        this.drawLine(
-          this.beforePointed['X'],
-          this.pointed['X'],
-          this.beforePointed['Y'],
-          this.pointed['Y']
-        )
-        break
-      case 'bucket':
-        //FIXME: バケツ中にドラッグしても何も起きない
-        break
-    }
+    this.pointed['X'] = Math.floor(coor['X'] / this.canvasMagnification)
+    this.pointed['Y'] = Math.floor(coor['Y'] / this.canvasMagnification)
   }
 
   // クリックしたとき（mousedown）
@@ -244,10 +206,10 @@ export default class CanvasPage extends Vue {
     //ペンモードによって処理の変更
     switch (this.penMode) {
       case 'pen':
-        this.drawdot(this.pointed['X'], this.pointed['Y'])
+        this.drawdot(this.pointed)
         break
       case 'bucket':
-        this.drawFill(this.pointed['X'], this.pointed['Y'])
+        this.drawFill(this.pointed)
     }
   }
 
@@ -258,22 +220,49 @@ export default class CanvasPage extends Vue {
     }
     this.isDrag = true
     //タッチした座標の取得
-    this.rect = this.canvas!.getBoundingClientRect()
-    let x = (e.touches[0].pageX - this.rect.left) / this.canvasSizeMagnification
-    let y = (e.touches[0].pageY - this.rect.top) / this.canvasSizeMagnification
+    let coor: Point = this.getPoint({
+      X: e.touches[0].pageX,
+      Y: e.touches[0].pageY
+    })
     //マウスムーブによる座標の獲得がないので、ここでpointed等を更新する
-    this.beforePointed['X'] = this.pointed['X']
-    this.beforePointed['Y'] = this.pointed['Y']
-    this.pointed['X'] = Math.floor(x / this.canvasMagnification)
-    this.pointed['Y'] = Math.floor(y / this.canvasMagnification)
+    this.getCell(coor)
     //ペンモードによって処理の変更
     switch (this.penMode) {
       case 'pen':
-        this.drawdot(this.pointed['X'], this.pointed['Y'])
+        this.drawdot(this.pointed)
         break
       case 'bucket':
-        this.drawFill(this.pointed['X'], this.pointed['Y'])
+        this.drawFill(this.pointed)
     }
+  }
+
+  // マウス移動時の座標取得(mousemove)
+  drag(e: any): void {
+    if (!this.pageActive) {
+      return
+    }
+    //キャンバス内におけるXY座標を取得
+    let coor: Point = this.getPoint({ X: e.clientX, Y: e.clientY })
+    //ドットのグリッド座標を更新
+    this.getCell(coor)
+    //描画
+    this.drowing()
+  }
+
+  //スワイプ時の座標取得(touchmove)
+  swipe(e: any): void {
+    if (!this.pageActive) {
+      return
+    }
+    //キャンバス内におけるXY座標を取得
+    let coor: Point = this.getPoint({
+      X: e.touches[0].pageX,
+      Y: e.touches[0].pageY
+    })
+    //ドットのグリッド座標を更新
+    this.getCell(coor)
+    //描画
+    this.drowing()
   }
 
   // 描画終了（mouseup, mouseout, touchend）
@@ -288,34 +277,48 @@ export default class CanvasPage extends Vue {
     this.isDrag = false
   }
 
-  //直線
-  //coorX1,coorY1 = 始点　coorX2,coorY2 = 終点
-  drawLine(
-    coorX1: number,
-    coorX2: number,
-    coorY1: number,
-    coorY2: number
-  ): void {
-    let xdiff = Math.abs(coorX1 - coorX2), //X方向の移動距離の絶対値
-      ydiff = Math.abs(coorY1 - coorY2), //Y方向の移動距離の絶対値
+  //取得した座標から描画を行う
+  drowing(): void {
+    if (!this.pageActive || !this.isDrag) {
+      return
+    }
+    switch (this.penMode) {
+      case 'pen':
+        //なめらかな線を描画するためドラッグ時は直線で描く
+        this.drawLine(this.beforePointed, this.pointed)
+        break
+      case 'bucket':
+        //FIXME: バケツ中にドラッグしても何も起きない
+        break
+    }
+  }
+
+  //直線を描画する
+  //coor1 = 始点のXY座標　coor2 = 終点のXY座標
+  drawLine(coor1: Point, coor2: Point): void {
+    let xdiff = Math.abs(coor1['X'] - coor2['X']), //X方向の移動距離の絶対値
+      ydiff = Math.abs(coor1['Y'] - coor2['Y']), //Y方向の移動距離の絶対値
       xdiff2 = xdiff * 2,
       ydiff2 = ydiff * 2,
-      Xvek = coorX2 > coorX1 ? 1 : -1, //X方向のベクトル
-      Yvek = coorY2 > coorY1 ? 1 : -1, //Y方向のベクトル
-      x = coorX1,
-      y = coorY1
+      Xvek = coor2['X'] > coor1['X'] ? 1 : -1, //X方向のベクトル
+      Yvek = coor2['Y'] > coor1['Y'] ? 1 : -1, //Y方向のベクトル
+      cell: Point = { X: coor1['X'], Y: coor1['Y'] } //塗り始めの初期位置
     if (xdiff >= ydiff) {
       //Xに何マス進んだらY方向に1進むか計算し、そこから直線を描画する
       let e = -xdiff
       for (let i = 0; i <= xdiff; i++) {
-        if (x < 0 || x >= this.canvasRange || y < 0 || y >= this.canvasRange)
+        if (
+          cell['X'] < 0 ||
+          cell['X'] >= this.canvasRange ||
+          cell['Y'] < 0 ||
+          cell['Y'] >= this.canvasRange
+        )
           break
-
-        this.drawdot(x, y)
-        x += Xvek //Xが1進む
+        this.drawdot(cell)
+        cell['X'] += Xvek //Xが1進む
         e += ydiff2
         if (e >= 0) {
-          y += Yvek //Yが1進む
+          cell['Y'] += Yvek //Yが1進む
           e -= xdiff2 //割り切れない場合を考え端数は切り捨てない
         }
       }
@@ -323,22 +326,26 @@ export default class CanvasPage extends Vue {
       //上と同様
       let e = -ydiff
       for (let i = 0; i <= ydiff; i++) {
-        if (x < 0 || x >= this.canvasRange || y < 0 || y >= this.canvasRange)
+        if (
+          cell['X'] < 0 ||
+          cell['X'] >= this.canvasRange ||
+          cell['Y'] < 0 ||
+          cell['Y'] >= this.canvasRange
+        )
           break
-
-        this.drawdot(x, y)
-        y += Yvek
+        this.drawdot(cell)
+        cell['Y'] += Yvek
         e += xdiff2
         if (e >= 0) {
-          x += Xvek
+          cell['X'] += Xvek
           e -= ydiff2
         }
       }
     }
   }
 
-  //ドット描画
-  drawdot(cellX: number, cellY: number): void {
+  //指定の座標にドットを1個描画
+  drawdot(cell: Point): void {
     this.canvasCtx!.beginPath()
     if (!this.isDrag) {
       return
@@ -346,42 +353,47 @@ export default class CanvasPage extends Vue {
     //該当の座標に色を塗るだけ
     this.canvasCtx!.fillStyle = this.selectingColor
     this.canvasCtx!.fillRect(
-      cellX * this.canvasMagnification,
-      cellY * this.canvasMagnification,
+      cell['X'] * this.canvasMagnification,
+      cell['Y'] * this.canvasMagnification,
       this.canvasMagnification,
       this.canvasMagnification
     )
-    this.canvasIndexData[cellY * this.canvasRange + cellX] = this.palletIndex
+    //塗った色のデータを反映させる
+    this.canvasIndexData[
+      cell['Y'] * this.canvasRange + cell['X']
+    ] = this.palletIndex
   }
 
   //塗りつぶし
   //引数は座標から出したドットのマス目の位置
-  drawFill(cellX: number, cellY: number): void {
+  drawFill(cell: Point): void {
     //クリックした位置の色のindexを取得
-    let color = this.canvasIndexData[cellY * this.canvasRange + cellX]
+    let color = this.canvasIndexData[cell['Y'] * this.canvasRange + cell['X']]
     //今の選択中の色と同じならキャンセル
     if (color == this.palletIndex) {
       return
     }
     //再帰処理を読んで走査
-    this.f(cellX, cellY, color)
+    this.f(cell, color)
   }
 
   //塗りつぶしの再帰処理
-  f(cellX: number, cellY: number, color: number): void {
+  f(cell: Point, color: number): void {
     //今の選択中の色と同じならキャンセル
     if (color == this.palletIndex) {
       return
     }
     //クリックした場所と違う色に当たるか画面端に到達するまで上下左右に走査し続ける
-    if (cellX >= this.canvasRange || cellX < 0) return
-    if (cellY >= this.canvasRange || cellY < 0) return
-    if (this.canvasIndexData[cellY * this.canvasRange + cellX] === color) {
-      this.drawdot(cellX, cellY)
-      this.f(cellX - 1, cellY, color)
-      this.f(cellX + 1, cellY, color)
-      this.f(cellX, cellY - 1, color)
-      this.f(cellX, cellY + 1, color)
+    if (cell['X'] >= this.canvasRange || cell['X'] < 0) return
+    if (cell['Y'] >= this.canvasRange || cell['Y'] < 0) return
+    if (
+      this.canvasIndexData[cell['Y'] * this.canvasRange + cell['X']] === color
+    ) {
+      this.drawdot({ X: cell['X'], Y: cell['Y'] })
+      this.f({ X: cell['X'] - 1, Y: cell['Y'] }, color)
+      this.f({ X: cell['X'] + 1, Y: cell['Y'] }, color)
+      this.f({ X: cell['X'], Y: cell['Y'] - 1 }, color)
+      this.f({ X: cell['X'], Y: cell['Y'] + 1 }, color)
     }
   }
 
@@ -423,7 +435,7 @@ export default class CanvasPage extends Vue {
     this.redraw(this.undoRedoDataStack[++this.undoRedoDataIndex].indexData)
   }
 
-  //渡されたcanvasのindexdataからドット絵を再描画する
+  //渡されたcanvasのindexdataからドット絵を再描画するforループ
   redraw(indexData: number[]): void {
     for (let x = 0; x < this.canvasRange; x++) {
       for (let y = 0; y < this.canvasRange; y++) {
