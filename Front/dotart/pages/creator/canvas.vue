@@ -4,53 +4,40 @@
       <v-container fluid>
         <v-row dense>
           <v-col cols="12">
-            <div class="DrowCanvas">
-              <canvas id="drowcanvas" width="384px" height="384px"></canvas>
-              <div class="GridCanvas">
-                <canvas
-                  id="gridcanvas"
-                  width="383px"
-                  height="383px"
-                  @mousedown="click"
-                  @mouseup="dragEnd"
-                  @mouseout="dragEnd"
-                  @mousemove="drag"
-                  @touchstart="touch"
-                  @touchmove="swipe"
-                  @touchend="dragEnd"
-                ></canvas>
-              </div>
+            <div class="canvas-wrapper" id="canvasWrapper">
+              <canvas
+                class="drow-canvas"
+                id="drowcanvas"
+                width="384px"
+                height="384px"
+              ></canvas>
+              <canvas
+                class="drow-canvas"
+                id="gridcanvas"
+                width="383px"
+                height="383px"
+                @mousedown="click"
+                @mouseup="dragEnd"
+                @mouseout="dragEnd"
+                @mousemove="drag"
+                @touchstart="touch"
+                @touchmove="swipe"
+                @touchend="dragEnd"
+              ></canvas>
             </div>
           </v-col>
         </v-row>
 
-        <v-row dense>
-          <v-col cols="2">
-            <div>
-              <button v-on:click="modeChange">{{ penMode }}</button>
-            </div>
-          </v-col>
-          <v-col cols="2">
-            <div>
-              <undoButton :clickEvent="undo" />
-            </div>
-          </v-col>
-          <v-col cols="2">
-            <div>
-              <redoButton :clickEvent="redo" />
-            </div>
-          </v-col>
-          <v-col cols="2">
-            <div>
-              <button v-on:click="drawGrid">grid</button>
-            </div>
-          </v-col>
-          <v-col cols="2">
-            <div>
-              <button v-on:click="Save">保存</button>
-            </div>
-          </v-col>
-        </v-row>
+        <buttonArea
+          :penMode="penMode"
+          :modeChange="modeChange"
+          :undo="undo"
+          :redo="redo"
+          :drawGrid="drawGrid"
+          :Save="Save"
+          :clockRotate="clockRotate"
+          :anticlockRotate="anticlockRotate"
+        ></buttonArea>
 
         <palletArea
           :colorPallet="colorPallet"
@@ -66,6 +53,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { canvasDataModule } from '../../store/modules/canvasData'
 import palletArea from '@/components/molecules/palletArea.vue'
+import buttonArea from '@/components/molecules/buttonArea.vue'
 import undoButton from '@/components/atomics/undoButton.vue'
 import redoButton from '@/components/atomics/redoButton.vue'
 import { Point } from '../../types/canvasPoint'
@@ -76,7 +64,8 @@ import { Stack } from '../../types/canvasStack'
   components: {
     palletArea,
     undoButton,
-    redoButton
+    redoButton,
+    buttonArea
   }
 })
 
@@ -97,22 +86,27 @@ export default class CanvasPage extends Vue {
 
   pointed: Point = { X: 0, Y: 0 } //現在のグリッド座標
   beforePointed: Point = { X: 0, Y: 0 } //一個前のグリッド座標
+
   colorPallet: string[] = this.Getcolorpallet //パレットの色
   palletIndex: number = 1 //選択中の色のパレットにおける順番　初期値は2番目
   selectingColor: string = this.colorPallet[this.palletIndex] //選択中の色
+
   canvasIndexData: number[] = this.Getcanvasindexdata //キャンバスに塗られている色の保存領域
-  stackMaxSize: number = 100 //巻き戻し可能な最大回数の設定
   undoRedoDataStack: Stack[] = [] //undo,redoに使う画面データの配列
   undoRedoDataIndex: number = -1 //↑の、「現在表示している画面のデータ」が格納されている部分の添え字を示す
+  stackMaxSize: number = 100 //巻き戻し可能な最大回数の設定
+
   canvas: HTMLCanvasElement | null = null //イラストを描くキャンバス
   canvasCtx: CanvasRenderingContext2D | null = null //↑のコンテキスト
   gridCanvas: HTMLCanvasElement | null = null //グリッド線が描かれたキャンバス
   gridCanvasCtx: CanvasRenderingContext2D | null = null //↑のコンテキスト
   rect: DOMRect | null = null //要素の寸法とそのビューポートに対する位置
+
+  penMode: string = 'pen' //ペンのモード
   isDrag: boolean = false //ドラッグしているかのフラグ
   isGrid: boolean = false //グリッドの表示の有無のフラグ
-  penMode: string = 'pen' //ペンのモード
   pageActive: boolean = false //画面が読み込まれたかどうかのフラグ
+
   canvasMagnification: number = this.Getmagnification // 表示倍率
   canvasRange: number = this.Getrange // キャンバス横幅.縦幅
   canvasStyreSize: number = 334 //キャンバスの外見上のサイズ
@@ -123,26 +117,28 @@ export default class CanvasPage extends Vue {
   }
   public mounted(): void {
     //ページが立ち上がる時の処理
-    //canvasのコンテキスト取得(絵を描く領域)
+    //canvasのコンテキスト取得(絵を描く領域)、サイズの変更、枠線の追加
     this.canvas = document.querySelector('#drowcanvas')
     this.canvasCtx = this.canvas!.getContext('2d')
-    //サイズ変更、枠線の追加
     this.canvas!.style.width = this.canvasStyreSize + 'px'
     this.canvas!.style.height = this.canvasStyreSize + 'px'
     this.canvas!.style.border = '1px solid rgb(0,0,0)'
-    //canvasのコンテキスト取得(グリッドの領域)
+    //canvasのコンテキスト取得(グリッドの領域)、サイズの変更、枠線の追加、透明度の指定
     this.gridCanvas = document.querySelector('#gridcanvas')
     this.gridCanvasCtx = this.gridCanvas!.getContext('2d')
-    //サイズの変更、枠線の追加
     this.gridCanvas!.style.width = this.canvasStyreSize + 'px'
     this.gridCanvas!.style.height = this.canvasStyreSize + 'px'
     this.gridCanvas!.style.border = '1px solid rgb(0, 0, 0)'
-
+    this.gridCanvas!.style.opacity = '0.5'
+    //canvasの親要素に高さを設定
+    let canvasWrapper: HTMLDivElement | null = document.querySelector(
+      '#canvasWrapper'
+    )
+    canvasWrapper!.style.paddingTop = this.canvasStyreSize + 1 + 'px'
     //初期色での塗りつぶし、グリッドの描画、undo,redo用配列に追加
     this.redraw(this.canvasIndexData)
     this.drawGrid()
     this.afterDraw()
-
     // スマホでのタッチ操作でのスクロール禁止
     document.addEventListener('touchmove', this.handleTouchMove, {
       passive: false
@@ -496,6 +492,34 @@ export default class CanvasPage extends Vue {
     }
   }
 
+  //時計回り
+  clockRotate(): void {
+    let resultIndexData: number[] = []
+    for (let i = 0; i < this.canvasIndexData.length; i++) {
+      let x = i % this.canvasRange
+      let y = (i - x) / this.canvasRange
+      let xy = this.canvasRange - y - 1 + x * this.canvasRange
+      resultIndexData[xy] = this.canvasIndexData[i]
+    }
+    this.canvasIndexData = resultIndexData.slice()
+    this.redraw(this.canvasIndexData)
+    this.afterDraw()
+  }
+
+  //反時計回り
+  anticlockRotate(): void {
+    let resultIndexData: number[] = []
+    for (let i = 0; i < this.canvasIndexData.length; i++) {
+      let x = i % this.canvasRange
+      let y = (i - x) / this.canvasRange
+      let xy = y + (this.canvasRange - x - 1) * this.canvasRange
+      resultIndexData[xy] = this.canvasIndexData[i]
+    }
+    this.canvasIndexData = resultIndexData.slice()
+    this.redraw(this.canvasIndexData)
+    this.afterDraw()
+  }
+
   //画像保存ページへの遷移
   Save(): void {
     //canvasのインデックスデータとパレットデータをストアへ
@@ -508,14 +532,32 @@ export default class CanvasPage extends Vue {
 </script>
 
 <style>
-.DrowCanvas {
+.canvas-wrapper {
+  max-width: 100%;
   position: relative;
+  padding: 0;
   top: -15px;
+  box-sizing: content-box;
 }
-.GridCanvas {
+.canvas-wrapper:before {
+  content: '';
+  display: block;
+}
+.drow-canvas {
   position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+.grid-canvas {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
   opacity: 0.5;
-  top: 0px;
-  left: 0px;
 }
 </style>
