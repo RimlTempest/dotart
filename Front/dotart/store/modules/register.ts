@@ -1,67 +1,68 @@
 import {
-  Mutation,
-  MutationAction,
-  Action,
-  VuexModule,
-  getModule,
-  Module
-} from 'vuex-module-decorators'
-import store from '@/store/store'
+    Mutation,
+    Action,
+    VuexModule,
+    getModule,
+    Module,
+} from 'vuex-module-decorators';
+import store from '@/store/store';
 
 // 結果を返す型
 export interface RegisterState {
-  userId: string
-  password: string
-  mail: string
+    userId: string;
+    password: string;
+    mail: string;
 }
 
 @Module({ dynamic: true, store, name: 'register', namespaced: true })
 class Register extends VuexModule implements RegisterState {
-  // state
-  userId: string = ''
-  password: string = ''
-  mail: string = ''
+    // state
+    userId: string = '';
+    password: string = '';
+    mail: string = '';
 
-  @Mutation
-  public setUserId(userid: string) {
-    this.userId = userid
-  }
-  @Mutation
-  public setPassword(password: string) {
-    this.password = password
-  }
-  @Mutation
-  public setMail(mail: string) {
-    this.mail = mail
-  }
-
-  @Action({})
-  public userIdAction(userid: string) {
-    if (userid.length > 1) {
-      this.setUserId(userid)
-    } else {
-      this.setUserId('error')
+    @Mutation
+    public setUserId(userid: string) {
+        this.userId = userid;
     }
-  }
 
-  @Action({})
-  public passwordAction(password: string) {
-    if (password.length >= 3) {
-      this.setPassword(password)
-    } else {
-      this.setPassword('error')
+    @Mutation
+    public setPassword(password: string) {
+        this.password = password;
     }
-  }
 
-  @Action({})
-  public mailAction(mail: string) {
-    if (mail.indexOf('@') >= 0) {
-      this.setMail(mail)
-    } else {
-      this.setMail('error')
+    @Mutation
+    public setMail(mail: string) {
+        this.mail = mail;
     }
-  }
+
+    @Action({})
+    public userIdAction(userid: string) {
+        if (userid.length > 1) {
+            this.setUserId(userid);
+        } else {
+            this.setUserId('error');
+        }
+    }
+
+    @Action({})
+    public passwordAction(password: string) {
+        if (password.length >= 3) {
+            this.setPassword(password);
+        } else {
+            this.setPassword('error');
+        }
+    }
+
+    @Action({})
+    public mailAction(mail: string) {
+        if (mail.includes('@')) {
+            this.setMail(mail);
+        } else {
+            this.setMail('error');
+        }
+    }
 }
 
 // モジュール化
-export const registerModule = getModule(Register)
+export const RegisterModule = getModule(Register);
