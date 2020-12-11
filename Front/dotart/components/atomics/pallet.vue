@@ -31,6 +31,8 @@ export default class Pallet extends Vue {
     height: string = '23px';
     border: string = '2px solid rgb(87, 56, 84)';
 
+    selectedflg: boolean = false;
+
     mounted(): void {
         if (this.selectedIndex === this.index) {
             this.margin = '1px';
@@ -55,7 +57,6 @@ export default class Pallet extends Vue {
         }
     }
 
-    selectedflg: boolean = false;
     getcolor(_e: any): void {
         this.$emit('getcolor', this.color, this.index);
     }
