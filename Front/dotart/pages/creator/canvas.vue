@@ -28,41 +28,22 @@
                     </v-col>
                 </v-row>
 
-                <v-row dense>
-                    <v-col cols="2">
-                        <div>
-                            <button @click="modeChange">
-                                {{ penMode }}
-                            </button>
-                        </div>
-                    </v-col>
-                    <v-col cols="2">
-                        <div>
-                            <undoButton :click-event="undo" />
-                        </div>
-                    </v-col>
-                    <v-col cols="2">
-                        <div>
-                            <redoButton :click-event="redo" />
-                        </div>
-                    </v-col>
-                    <v-col cols="2">
-                        <div>
-                            <button @click="drawGrid">grid</button>
-                        </div>
-                    </v-col>
-                    <v-col cols="2">
-                        <div>
-                            <button @click="Save">保存</button>
-                        </div>
-                    </v-col>
-                </v-row>
+                <button-area
+                    :penMode="penMode"
+                    :modeChange="modeChange"
+                    :undo="undo"
+                    :redo="redo"
+                    :drawGrid="drawGrid"
+                    :Save="Save"
+                    :clockRotate="clockRotate"
+                    :anticlockRotate="anticlockRotate"
+                ></button-area>
 
-                <palletArea
-                    :color-pallet="colorPallet"
-                    :pfirst-pallet-index="palletIndex"
-                    @getpalletcolor="getPalletColor"
-                ></palletArea>
+                <main-menu
+                    :colorPallet="colorPallet"
+                    :firstPalletIndex="palletIndex"
+                    :getPalletColor="getPalletColor"
+                ></main-menu>
             </v-container>
         </v-flex>
     </v-layout>
@@ -74,15 +55,15 @@ import { Point } from '@/types/Canvas/PointType';
 import { Stack } from '@/types/Canvas/StackType';
 import { CanvasDataModule } from '@/store/modules/canvasData';
 import PalletArea from '@/components/Molecules/PalletArea.vue';
-import UndoButton from '@/components/Atomics/UndoButton.vue';
-import RedoButton from '@/components/Atomics/RedoButton.vue';
+import ButtonArea from '@/components/Molecules/ButtonArea.vue';
+import MainMenu from '@/components/Organisms/MainMenu.vue';
 
 @Component({
     // middleware: "auth",
     components: {
         PalletArea,
-        UndoButton,
-        RedoButton,
+        ButtonArea,
+        MainMenu,
     },
 })
 
@@ -513,6 +494,33 @@ export default class CanvasPage extends Vue {
         }
     }
 
+    //時計回り
+    clockRotate(): void {
+        let resultIndexData: number[] = [];
+        for (let i = 0; i < this.canvasIndexData.length; i++) {
+            let x = i % this.canvasRange;
+            let y = (i - x) / this.canvasRange;
+            let xy = this.canvasRange - y - 1 + x * this.canvasRange;
+            resultIndexData[xy] = this.canvasIndexData[i];
+        }
+        this.canvasIndexData = resultIndexData.slice();
+        this.redraw(this.canvasIndexData);
+        this.afterDraw();
+    }
+
+    //反時計回り
+    anticlockRotate(): void {
+        let resultIndexData: number[] = [];
+        for (let i = 0; i < this.canvasIndexData.length; i++) {
+            let x = i % this.canvasRange;
+            let y = (i - x) / this.canvasRange;
+            let xy = y + (this.canvasRange - x - 1) * this.canvasRange;
+            resultIndexData[xy] = this.canvasIndexData[i];
+        }
+        this.canvasIndexData = resultIndexData.slice();
+        this.redraw(this.canvasIndexData);
+        this.afterDraw();
+    }
     // 画像保存ページへの遷移
     Save(): void {
         // canvasのインデックスデータとパレットデータをストアへ
