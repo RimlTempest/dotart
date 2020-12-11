@@ -61,7 +61,7 @@
                 <palletArea
                     :color-pallet="colorPallet"
                     :pfirst-pallet-index="palletIndex"
-                    @getpalletcolor="getpalletcolor"
+                    @getpalletcolor="getPalletColor"
                 ></palletArea>
             </v-container>
         </v-flex>
@@ -70,8 +70,8 @@
 
 <script lang="ts">
 import { Vue, Component } from 'nuxt-property-decorator';
-import { Point } from '@/types/Canvas/Point';
-import { Stack } from '@/types/Canvas/Stack';
+import { Point } from '@/types/Canvas/PointType';
+import { Stack } from '@/types/Canvas/StackType';
 import { CanvasDataModule } from '@/store/modules/canvasData';
 import PalletArea from '@/components/Molecules/PalletArea.vue';
 import UndoButton from '@/components/Atomics/UndoButton.vue';
@@ -88,28 +88,28 @@ import RedoButton from '@/components/Atomics/RedoButton.vue';
 
 // TypeScriptの処理
 export default class CanvasPage extends Vue {
-    get Getrange(): number {
+    get getRange(): number {
         return CanvasDataModule.canvasRange;
     }
 
-    get Getmagnification(): number {
+    get getMagnification(): number {
         return CanvasDataModule.canvasMagnification;
     }
 
-    get Getcolorpallet(): string[] {
+    get getColorPallet(): string[] {
         return CanvasDataModule.palletColor;
     }
 
-    get Getcanvasindexdata(): number[] {
+    get getCanvasIndexdata(): number[] {
         return CanvasDataModule.canvasIndexData;
     }
 
     pointed: Point = { X: 0, Y: 0 }; // 現在のグリッド座標
     beforePointed: Point = { X: 0, Y: 0 }; // 一個前のグリッド座標
-    colorPallet: string[] = this.Getcolorpallet; // パレットの色
+    colorPallet: string[] = this.getColorPallet; // パレットの色
     palletIndex: number = 1; // 選択中の色のパレットにおける順番 初期値は2番目
     selectingColor: string = this.colorPallet[this.palletIndex]; // 選択中の色
-    canvasIndexData: number[] = this.Getcanvasindexdata; // キャンバスに塗られている色の保存領域
+    canvasIndexData: number[] = this.getCanvasIndexdata; // キャンバスに塗られている色の保存領域
     stackMaxSize: number = 100; // 巻き戻し可能な最大回数の設定
     undoRedoDataStack: Stack[] = []; // undo,redoに使う画面データの配列
     undoRedoDataIndex: number = -1; // ↑の、「現在表示している画面のデータ」が格納されている部分の添え字を示す
@@ -122,8 +122,8 @@ export default class CanvasPage extends Vue {
     isGrid: boolean = false; // グリッドの表示の有無のフラグ
     penMode: string = 'pen'; // ペンのモード
     pageActive: boolean = false; // 画面が読み込まれたかどうかのフラグ
-    canvasMagnification: number = this.Getmagnification; // 表示倍率
-    canvasRange: number = this.Getrange; // キャンバス横幅.縦幅
+    canvasMagnification: number = this.getMagnification; // 表示倍率
+    canvasRange: number = this.getRange; // キャンバス横幅.縦幅
     canvasStyreSize: number = 334; // キャンバスの外見上のサイズ
     canvasSizeMagnification: number = 0.87; // キャンパスの表示倍率 外見上のサイズと整合性つけるため必要
 
@@ -182,7 +182,7 @@ export default class CanvasPage extends Vue {
     }
 
     // クリックしたパレットの色を取得
-    getpalletcolor(newColor: string, newIndex: number): void {
+    getPalletColor(newColor: string, newIndex: number): void {
         this.selectingColor = newColor;
         this.palletIndex = newIndex;
     }
@@ -217,7 +217,7 @@ export default class CanvasPage extends Vue {
         // ペンモードによって処理の変更
         switch (this.penMode) {
             case 'pen':
-                this.drawdot(this.pointed);
+                this.drawDot(this.pointed);
                 break;
             case 'bucket':
                 this.drawFill(this.pointed);
@@ -240,7 +240,7 @@ export default class CanvasPage extends Vue {
         // ペンモードによって処理の変更
         switch (this.penMode) {
             case 'pen':
-                this.drawdot(this.pointed);
+                this.drawDot(this.pointed);
                 break;
             case 'bucket':
                 this.drawFill(this.pointed);
@@ -325,7 +325,7 @@ export default class CanvasPage extends Vue {
                     cell.Y >= this.canvasRange
                 )
                     break;
-                this.drawdot(cell);
+                this.drawDot(cell);
                 cell.X += Xvek; // Xが1進む
                 e += ydiff2;
                 if (e >= 0) {
@@ -344,7 +344,7 @@ export default class CanvasPage extends Vue {
                     cell.Y >= this.canvasRange
                 )
                     break;
-                this.drawdot(cell);
+                this.drawDot(cell);
                 cell.Y += Yvek;
                 e += xdiff2;
                 if (e >= 0) {
@@ -356,7 +356,7 @@ export default class CanvasPage extends Vue {
     }
 
     // 指定の座標にドットを1個描画
-    drawdot(cell: Point): void {
+    drawDot(cell: Point): void {
         this.canvasCtx!.beginPath();
         if (!this.isDrag) {
             return;
@@ -400,7 +400,7 @@ export default class CanvasPage extends Vue {
         if (
             this.canvasIndexData[cell.Y * this.canvasRange + cell.X] === color
         ) {
-            this.drawdot({ X: cell.X, Y: cell.Y });
+            this.drawDot({ X: cell.X, Y: cell.Y });
             this.f({ X: cell.X - 1, Y: cell.Y }, color);
             this.f({ X: cell.X + 1, Y: cell.Y }, color);
             this.f({ X: cell.X, Y: cell.Y - 1 }, color);
