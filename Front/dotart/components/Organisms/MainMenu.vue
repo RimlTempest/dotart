@@ -6,7 +6,7 @@
                     <pallet-area
                         :colorPallet="colorPallet"
                         :firstPalletIndex="firstPalletIndex"
-                        @getpalletcolor="getpalletcolor"
+                        @getPalletColor="getPalletColor"
                     ></pallet-area>
                 </div>
                 <button class="switch" v-on:click="translate">▲</button>
@@ -21,7 +21,7 @@
                         <pallet-area
                             :colorPallet="colorPallet"
                             :firstPalletIndex="firstPalletIndex"
-                            @getpalletcolor="getpalletcolor"
+                            @getPalletColor="getPalletColor"
                         ></pallet-area>
                         <button class="switch" v-on:click="translate">▼</button>
                     </div>
@@ -32,14 +32,14 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import PalletArea from '@/components/molecules/PalletArea.vue';
+import { Vue, Component, Prop } from 'nuxt-property-decorator';
+import PalletArea from '@/components/Molecules/PalletArea.vue';
 
 @Component({
     //middleware: 'auth',
     components: {
-        PalletArea
-    }
+        PalletArea,
+    },
 })
 export default class MainMenu extends Vue {
     @Prop({ type: Array })
@@ -47,7 +47,7 @@ export default class MainMenu extends Vue {
     @Prop({ type: Number })
     firstPalletIndex!: number; //最初に選択しているパレットの位置
     @Prop({ type: Function })
-    getpalletcolor!: Function;
+    getPalletColor!: Function;
 
     drawerFlg: boolean = false;
     public translate(): void {
