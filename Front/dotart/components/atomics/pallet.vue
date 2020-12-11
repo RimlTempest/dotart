@@ -62,7 +62,7 @@ export default class Pallet extends Vue {
     }
 }
 </script>
-<style>
+<style lang="scss" scoped>
 .pallet {
     display: flex;
     border-radius: 35%;
