@@ -4,14 +4,9 @@
             <v-container fluid>
                 <v-row dense>
                     <v-col cols="12">
-                        <v-card
-                            light
-                            hover
-                            max-width="1000"
-                            class="justify-center"
-                        >
+                        <v-card light hover max-width="1000" class="card">
                             <v-form ref="form" lazy-validation>
-                                <v-card-title class="justify-center"
+                                <v-card-title class="card"
                                     >ドット絵作成</v-card-title
                                 >
                             </v-form>
@@ -19,12 +14,7 @@
                     </v-col>
 
                     <v-col cols="12">
-                        <v-card
-                            light
-                            hover
-                            max-width="1000"
-                            class="justify-center"
-                        >
+                        <v-card light hover max-width="1000" class="card">
                             <v-form ref="form" lazy-validation>
                                 <v-card-title class="headline"
                                     >キャンバス名</v-card-title
@@ -41,12 +31,7 @@
                     </v-col>
 
                     <v-col cols="12">
-                        <v-card
-                            light
-                            hover
-                            max-width="1000"
-                            class="justify-center"
-                        >
+                        <v-card light hover max-width="1000" class="card">
                             <v-form ref="form" lazy-validation>
                                 <v-card-title class="headline"
                                     >パレット選択</v-card-title
@@ -65,7 +50,7 @@
                                     <div
                                         v-for="item in selectedPallet['pallet']"
                                         :key="item"
-                                        class="palletColor"
+                                        class="palletPreview__Color"
                                         :style="{ background: item }"
                                     ></div>
                                 </div>
@@ -74,12 +59,7 @@
                     </v-col>
 
                     <v-col cols="12">
-                        <v-card
-                            light
-                            hover
-                            max-width="1000"
-                            class="justify-center"
-                        >
+                        <v-card light hover max-width="1000" class="card">
                             <v-form ref="form" lazy-validation>
                                 <v-card-title class="headline"
                                     >キャンバスサイズ指定</v-card-title
@@ -237,17 +217,20 @@ export default class CreatorPage extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.card {
+    justify-content: center;
+}
 .palletPreview {
     display: flex;
     pointer-events: none;
-}
-.palletColor {
-    display: flex;
-    width: 20px;
-    height: 20px;
-    border: 2px solid rgb(50, 50, 50);
-    pointer-events: none;
-    border-radius: 30%;
+    &__Color {
+        display: flex;
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgb(50, 50, 50);
+        pointer-events: none;
+        border-radius: 30%;
+    }
 }
 </style>

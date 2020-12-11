@@ -10,7 +10,7 @@
                                 width="384px"
                                 height="384px"
                             ></canvas>
-                            <div class="GridCanvas">
+                            <div class="DrowCanvas__Grid">
                                 <canvas
                                     id="gridcanvas"
                                     width="383px"
@@ -523,15 +523,15 @@ export default class CanvasPage extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .DrowCanvas {
     position: relative;
     top: -15px;
-}
-.GridCanvas {
-    position: absolute;
-    opacity: 0.5;
-    top: 0px;
-    left: 0px;
+    &__Grid {
+        position: absolute;
+        opacity: 0.5;
+        top: 0px;
+        left: 0px;
+    }
 }
 </style>

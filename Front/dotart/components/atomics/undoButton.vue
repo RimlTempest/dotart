@@ -23,4 +23,6 @@ export default class UndoButton extends Vue {
     clickEvent!: Function;
 }
 </script>
-<style></style>
+<style lang="scss" scoped>
+/* */
+</style>

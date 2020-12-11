@@ -3,18 +3,13 @@
         <v-carousel-item v-for="(slide, i) in slides" :key="i">
             <v-sheet :color="colors[i]" height="100%">
                 <v-row class="fill-height" align="center" justify="center">
-                    <v-card
-                        class="cardColor"
-                        height="600"
-                        width="1000"
-                        outlined
-                    >
+                    <v-card class="card" height="600" width="1000" outlined>
                         <v-list-item three-line>
                             <v-list-item-content>
                                 <v-list-item-title class="headline">
                                     <p>{{ slide }}</p>
                                 </v-list-item-title>
-                                <div v-if="i == 0" class="sl1">
+                                <div v-if="i == 0" class="card__slide1">
                                     <p>フロントエンド</p>
                                     <p>・Riml</p>
                                     <p>・ZIN</p>
@@ -58,7 +53,7 @@
                                     <p>App</p>
                                     <p>・MySQL / phpmyadmin</p>
                                 </div>
-                                <div v-if="i == 3" class="sl3">
+                                <div v-if="i == 3" class="card__slide3">
                                     <p>実機説明（もう動かしている）</p>
                                 </div>
                             </v-list-item-content>
@@ -85,23 +80,22 @@ export default class Counter extends Vue {
 }
 </script>
 
-<style>
-.cardColor {
+<style lang="scss" scoped>
+.card {
     background-color: rgba(255, 255, 255, 0) !important;
     border-color: rgba(255, 255, 255, 0) !important;
-}
+    &__slide1 {
+        position: absolute;
+        top: 300px;
+        right: 0%;
+    }
 
-.sl1 {
-    position: absolute;
-    top: 300px;
-    right: 0%;
-}
-
-.sl3 {
-    position: absolute;
-    text-align: center;
-    top: 290px;
-    right: 0;
-    left: 0;
+    &__slide3 {
+        position: absolute;
+        text-align: center;
+        top: 290px;
+        right: 0;
+        left: 0;
+    }
 }
 </style>

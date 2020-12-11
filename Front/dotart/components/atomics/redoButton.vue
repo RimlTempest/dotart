@@ -23,4 +23,6 @@ export default class RedoButton extends Vue {
     clickEvent!: Function;
 }
 </script>
-<style></style>
+<style lang="scss" scoped>
+/* */
+</style>

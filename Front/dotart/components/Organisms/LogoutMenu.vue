@@ -1,7 +1,7 @@
 <template>
     <v-menu offset-y>
         <template v-slot:activator="{ on }">
-            <v-btn text outlined v-on="on">{{ loginOfregister }}</v-btn>
+            <v-btn text outlined v-on="on">{{ loginOfRegister }}</v-btn>
         </template>
         <v-list>
             <!-- ログイン -->
@@ -24,7 +24,7 @@ import { Component, Vue } from 'nuxt-property-decorator';
 
 @Component({})
 export default class LogoutMenu extends Vue {
-    loginOfregister: string =
+    loginOfRegister: string =
         this.$store.state.auth.user.userID + 'でログイン中です。';
 
     logout(): void {

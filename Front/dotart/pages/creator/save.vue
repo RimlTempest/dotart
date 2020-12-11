@@ -23,14 +23,9 @@
                 </v-row>
                 <v-row dense>
                     <v-col cols="12">
-                        <v-card
-                            light
-                            hover
-                            max-width="1000"
-                            class="justify-center"
-                        >
+                        <v-card light hover max-width="1000" class="card">
                             <v-form ref="form" lazy-validation>
-                                <v-card-title class="justify-center">
+                                <v-card-title class="card">
                                     画像保存
                                 </v-card-title>
                             </v-form>
@@ -38,12 +33,7 @@
                     </v-col>
 
                     <v-col cols="12">
-                        <v-card
-                            light
-                            hover
-                            max-width="1000"
-                            class="justify-center"
-                        >
+                        <v-card light hover max-width="1000" class="card">
                             <v-form ref="form" lazy-validation>
                                 <v-card-title class="headline"
                                     >画像サイズ指定</v-card-title
@@ -231,7 +221,10 @@ export default class CreatorPage extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.card {
+    justify-content: center;
+}
 .ResultCanvas {
     position: relative;
     top: -15px;

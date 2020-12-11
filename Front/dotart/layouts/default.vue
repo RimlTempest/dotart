@@ -62,7 +62,7 @@ export default class DefaultPage extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .cousor {
     cursor: pointer;
 }

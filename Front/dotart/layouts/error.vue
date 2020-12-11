@@ -30,7 +30,7 @@ export default class ErrorPage extends Vue {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 h1 {
     font-size: 20px;
 }

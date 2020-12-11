@@ -7,7 +7,7 @@
                 :color="item"
                 :index="index"
                 :selected-index="palletIndex"
-                @getcolor="getpalletcolor"
+                @getcolor="getPalletColor"
             ></pallet>
         </v-layout>
     </v-row>
@@ -33,14 +33,14 @@ export default class PalletArea extends Vue {
     palletIndex: number = this.firstPalletIndex | 1;
     selectingColor: string = this.colorPallet[this.palletIndex];
 
-    getpalletcolor(newColor: string, newIndex: number): void {
+    getPalletColor(newColor: string, newIndex: number): void {
         this.selectingColor = newColor;
         this.palletIndex = newIndex;
-        this.$emit('getpalletcolor', this.selectingColor, this.palletIndex);
+        this.$emit('getPalletColor', this.selectingColor, this.palletIndex);
     }
 }
 </script>
-<style>
+<style lang="scss" scoped>
 .palletarea {
     display: flex;
     justify-content: space-between;

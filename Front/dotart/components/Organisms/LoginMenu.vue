@@ -1,7 +1,7 @@
 <template>
     <v-menu offset-y>
         <template v-slot:activator="{ on }">
-            <v-btn text outlined v-on="on">{{ loginOfregister }}</v-btn>
+            <v-btn text outlined v-on="on">{{ loginOfRegister }}</v-btn>
         </template>
         <v-list>
             <!-- ログイン -->
@@ -35,6 +35,6 @@ import { Component, Vue } from 'nuxt-property-decorator';
 
 @Component({})
 export default class LoginMenu extends Vue {
-    loginOfregister: string = 'ログイン / 新規登録';
+    loginOfRegister: string = 'ログイン / 新規登録';
 }
 </script>
