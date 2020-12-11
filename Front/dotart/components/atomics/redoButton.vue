@@ -1,28 +1,28 @@
 <template>
-  <button v-on:click="clickEvent">
-    <icon-Base width="36" height="36" icon-name="redoIcon"
-      ><redoIcon
-    /></icon-Base>
-  </button>
+    <button @click="clickEvent">
+        <icon-Base width="36" height="36" icon-name="redoIcon"
+            ><redoIcon
+        /></icon-Base>
+    </button>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
-import { canvasDataModule } from '../../store/modules/canvasData'
-import iconBase from '@/components/atomics/icons/iconBase.vue'
-import redoIcon from '@/components/atomics/icons/redoIcon.vue'
+import { Vue, Component, Prop } from 'nuxt-property-decorator';
+// import { canvasDataModule } from '../../store/modules/canvasData';
+import IconBase from '@/components/Atomics/Icons/IconBase.vue';
+import RedoIcon from '@/components/Atomics/Icons/RedoIcon.vue';
 
 @Component({
-  middleware: 'auth',
-  components: {
-    iconBase,
-    redoIcon
-  }
+    components: {
+        IconBase,
+        RedoIcon,
+    },
 })
-export default class undoButton extends Vue {
-  @Prop({ type: Function })
-  clickEvent!: Function
+export default class RedoButton extends Vue {
+    @Prop({ type: Function })
+    clickEvent!: Function;
 }
 </script>
-<style>
+<style lang="scss" scoped>
+/* */
 </style>

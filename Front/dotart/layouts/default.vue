@@ -1,67 +1,69 @@
 <template>
-  <v-app dark>
-    <!-- appbar  :clipped-left="clipped"-->
-    <v-app-bar color="primary" fixed app>
-      <v-toolbar-title v-text="title" class="cousor" @click="homerouting" />
-      <!--<v-img src="/logo.svg" aspect-ratio="1.7" @></v-img>-->
-      <v-spacer />
-      <!-- <div v-if="(this as any).$auth.loggedIn">test</div> -->
-      <div v-if="!this.$store.state.auth.loggedIn">
-        <LoginMenu />
-      </div>
-      <div v-else>
-        <LogoutMenu />
-      </div>
-    </v-app-bar>
-    <!-- main -->
-    <v-content>
-      <v-container>
-        <nuxt />
-      </v-container>
-    </v-content>
-    <!-- footer -->
-    <v-footer :fixed="fixed" color="primary" app>
-      <v-spacer />
-      <span>
-        <strong>{{ title }}</strong>
-        &copy; {{ copyRightYear }}
-      </span>
-    </v-footer>
-  </v-app>
+    <v-app dark>
+        <!-- appbar  :clipped-left="clipped"-->
+        <v-app-bar color="primary" fixed app>
+            <v-toolbar-title
+                class="cousor"
+                @click="homerouting"
+                v-text="title"
+            />
+            <!--<v-img src="/logo.svg" aspect-ratio="1.7" @></v-img>-->
+            <v-spacer />
+            <!-- <div v-if="(this as any).$auth.loggedIn">test</div> -->
+            <div v-if="!this.$store.state.auth.loggedIn">
+                <LoginMenu />
+            </div>
+            <div v-else>
+                <LogoutMenu />
+            </div>
+        </v-app-bar>
+        <!-- main -->
+        <v-content>
+            <v-container>
+                <nuxt />
+            </v-container>
+        </v-content>
+        <!-- footer -->
+        <v-footer :fixed="fixed" color="primary" app>
+            <v-spacer />
+            <span>{{ title }}</span>
+            <span>{{ copyRightYear }}</span>
+        </v-footer>
+    </v-app>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
-import LoginMenu from '@/components/default/LoginMenu.vue'
-import LogoutMenu from '@/components/default/LogoutMenu.vue'
+import { Vue, Component } from 'nuxt-property-decorator';
+import LogoutMenu from '@/components/Organisms/LogoutMenu.vue';
+import LoginMenu from '@/components/Organisms/LoginMenu.vue';
 
 @Component({
-  components: {
-    LoginMenu,
-    LogoutMenu
-  }
+    components: {
+        LoginMenu,
+        LogoutMenu,
+    },
 })
 export default class DefaultPage extends Vue {
-  // data()
-  fixed: boolean = false
-  title: string | undefined = process.env.APP_NAME
+    // data()
+    fixed: boolean = false;
+    title: string | undefined = process.env.APP_NAME;
 
-  homerouting(): void {
-    this.$router.push('/')
-    //console.log(this.$store.state)
-  }
+    homerouting(): void {
+        this.$router.push('/');
+        // console.log(this.$store.state)
+    }
 
-  // computed
-  get copyRightYear(): string | number {
-    const start: number = 2019
-    const now: number = new Date().getFullYear()
-    return start === now ? start : `${start} - ${now}`
-  }
+    // computed
+    get copyRightYear(): string | number {
+        const start: number = 2019;
+        const now: number = new Date().getFullYear();
+        return start === now ? start : `${start} - ${now}`;
+    }
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .cousor {
-  cursor: pointer;
+    cursor: pointer;
 }
 </style>
