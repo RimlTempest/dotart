@@ -6,16 +6,7 @@ import {
     Module,
 } from 'vuex-module-decorators';
 import store from '@/store/store';
-
-// 結果を返す型
-export interface CanvasDataState {
-    canvasRange: number;
-    canvasMagnification: number;
-    canvasName: string;
-    palletName: string;
-    palletColor: string[];
-    canvasIndexData: number[];
-}
+import { CanvasDataState } from '~/types/Store/CanvasDataType';
 
 @Module({ dynamic: true, store, name: 'canvasData', namespaced: true })
 class CanvasData extends VuexModule implements CanvasDataState {

@@ -49,7 +49,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'nuxt-property-decorator';
-import { User } from '@/types/User/User';
+import { User } from '@/types/User/UserType';
 import ConfirmDialog from '@/components/Signup/ConfirmDialog.vue';
 
 type Rules = {

@@ -6,12 +6,7 @@ import {
     Module,
 } from 'vuex-module-decorators';
 import store from '@/store/store';
-
-// 結果を返す型
-export interface CounterState {
-    incrementCounter: number;
-    decrementCounter: number;
-}
+import { CounterState } from '~/types/Store/CounterType';
 
 @Module({ dynamic: true, store, name: 'counter', namespaced: true })
 class Counter extends VuexModule implements CounterState {

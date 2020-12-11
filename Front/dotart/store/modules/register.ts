@@ -6,13 +6,7 @@ import {
     Module,
 } from 'vuex-module-decorators';
 import store from '@/store/store';
-
-// 結果を返す型
-export interface RegisterState {
-    userId: string;
-    password: string;
-    mail: string;
-}
+import { RegisterState } from '~/types/Store/RegisterType';
 
 @Module({ dynamic: true, store, name: 'register', namespaced: true })
 class Register extends VuexModule implements RegisterState {
