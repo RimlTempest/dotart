@@ -54,14 +54,12 @@ import { Vue, Component } from 'nuxt-property-decorator';
 import { Point } from '@/types/Canvas/PointType';
 import { Stack } from '@/types/Canvas/StackType';
 import { CanvasDataModule } from '@/store/modules/canvasData';
-import PalletArea from '@/components/Molecules/PalletArea.vue';
 import ButtonArea from '@/components/Molecules/ButtonArea.vue';
 import MainMenu from '@/components/Organisms/MainMenu.vue';
 
 @Component({
     // middleware: "auth",
     components: {
-        PalletArea,
         ButtonArea,
         MainMenu,
     },
@@ -87,22 +85,27 @@ export default class CanvasPage extends Vue {
 
     pointed: Point = { X: 0, Y: 0 }; // 現在のグリッド座標
     beforePointed: Point = { X: 0, Y: 0 }; // 一個前のグリッド座標
+
     colorPallet: string[] = this.getColorPallet; // パレットの色
     palletIndex: number = 1; // 選択中の色のパレットにおける順番 初期値は2番目
     selectingColor: string = this.colorPallet[this.palletIndex]; // 選択中の色
     canvasIndexData: number[] = this.getCanvasIndexdata; // キャンバスに塗られている色の保存領域
+
     stackMaxSize: number = 100; // 巻き戻し可能な最大回数の設定
     undoRedoDataStack: Stack[] = []; // undo,redoに使う画面データの配列
     undoRedoDataIndex: number = -1; // ↑の、「現在表示している画面のデータ」が格納されている部分の添え字を示す
+
     canvas: HTMLCanvasElement | null = null; // イラストを描くキャンバス
     canvasCtx: CanvasRenderingContext2D | null = null; // ↑のコンテキスト
     gridCanvas: HTMLCanvasElement | null = null; // グリッド線が描かれたキャンバス
     gridCanvasCtx: CanvasRenderingContext2D | null = null; // ↑のコンテキスト
     rect: DOMRect | null = null; // 要素の寸法とそのビューポートに対する位置
+
     isDrag: boolean = false; // ドラッグしているかのフラグ
     isGrid: boolean = false; // グリッドの表示の有無のフラグ
     penMode: string = 'pen'; // ペンのモード
     pageActive: boolean = false; // 画面が読み込まれたかどうかのフラグ
+
     canvasMagnification: number = this.getMagnification; // 表示倍率
     canvasRange: number = this.getRange; // キャンバス横幅.縦幅
     canvasStyreSize: number = 334; // キャンバスの外見上のサイズ
