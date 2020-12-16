@@ -42,7 +42,8 @@ export default class PalletArea extends Vue {
 </script>
 <style lang="scss" scoped>
 .palletarea {
-    display: flex;
+    display: inline-block;
+    white-space: nowrap;
     justify-content: space-between;
 }
 </style>

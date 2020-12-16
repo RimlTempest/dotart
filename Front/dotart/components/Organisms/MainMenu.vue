@@ -2,8 +2,13 @@
     <div class="mainMenu">
         <div v-if="!drawerFlg" class="drawerMenuArea">
             <div class="drawerdefault">
-                <div class="pallet">
+                <div
+                    class="scroll"
+                    id="beforeScrollArea"
+                    v-on:scroll="onScroll"
+                >
                     <pallet-area
+                        class="palletArea"
                         :colorPallet="colorPallet"
                         :firstPalletIndex="firstPalletIndex"
                         @getPalletColor="getPalletColor"
@@ -18,11 +23,14 @@
                 <div class="drawerMenu">
                     <!-- ここにメニューの内容を書いていく -->
                     <div class="drawerdefault">
-                        <pallet-area
-                            :colorPallet="colorPallet"
-                            :firstPalletIndex="firstPalletIndex"
-                            @getPalletColor="getPalletColor"
-                        ></pallet-area>
+                        <div class="scroll" id="afterScrollArea">
+                            <pallet-area
+                                class="palletArea"
+                                :colorPallet="colorPallet"
+                                :firstPalletIndex="firstPalletIndex"
+                                @getPalletColor="getPalletColor"
+                            ></pallet-area>
+                        </div>
                         <button class="switch" v-on:click="translate">▼</button>
                     </div>
                 </div>
@@ -49,14 +57,32 @@ export default class MainMenu extends Vue {
     @Prop({ type: Function })
     getPalletColor!: Function;
 
+    scrollArea: HTMLDivElement | null = null;
     drawerFlg: boolean = false;
+
+    public mounted(): void {
+        this.scrollArea = document.querySelector('#beforeScrollArea');
+        console.log('this.scrollArea');
+        this.scrollArea!.addEventListener('scroll', this.onScroll);
+        return;
+    }
+
     public translate(): void {
         this.drawerFlg = !this.drawerFlg;
+        return;
+    }
+
+    public onScroll(e: any): void {
+        console.log(e);
         return;
     }
 }
 </script>
 <style lang="scss" scoped>
+$defaultHeight: 45px; //格納状態でのメニューのheight
+$movedHeight: 230px; //展開状態でのメニューのheight
+$movePercentage: 100% * (1 - $defaultHeight/$movedHeight); //transformの割合
+//@debug $movePercentage;
 .mainMenu {
     display: grid;
 }
@@ -64,6 +90,13 @@ export default class MainMenu extends Vue {
     display: ruby;
     vertical-align: top;
     justify-content: space-between;
+}
+.scroll {
+    overflow-x: scroll;
+    max-width: 90%;
+}
+.palletArea {
+    margin: auto;
 }
 .switch {
     vertical-align: top;
@@ -74,12 +107,6 @@ export default class MainMenu extends Vue {
     transform: translate(0px, 0px);
     transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
 }
-
-$defaultHeight: 32px;
-$movedHeight: 230px;
-$movePercentage: 100% * (1 - $defaultHeight/$movedHeight);
-
-@debug $movePercentage;
 .popupMenu-enter,
 .popupMenu-leave-to {
     transform: translateY($movePercentage);

@@ -33,7 +33,7 @@ export default class Pallet extends Vue {
 
     selectedflg: boolean = false;
 
-    mounted(): void {
+    public mounted(): void {
         if (this.selectedIndex === this.index) {
             this.margin = '1px';
             this.width = '25px';
@@ -43,7 +43,7 @@ export default class Pallet extends Vue {
     }
 
     @Watch('selectedIndex')
-    checkSelected(newIndex: number, _oldIndex: number) {
+    public checkSelected(newIndex: number, _oldIndex: number) {
         if (newIndex === this.index) {
             this.margin = '1px';
             this.width = '25px';
@@ -57,14 +57,14 @@ export default class Pallet extends Vue {
         }
     }
 
-    getColor(_e: any): void {
+    public getColor(_e: any): void {
         this.$emit('getColor', this.color, this.index);
     }
 }
 </script>
 <style lang="scss" scoped>
 .pallet {
-    display: flex;
+    display: inline-block;
     border-radius: 35%;
 }
 </style>
