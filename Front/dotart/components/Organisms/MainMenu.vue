@@ -1,6 +1,6 @@
 <template>
     <div class="mainMenu">
-        <div v-if="!drawerFlg" class="drawerButtonArea">
+        <div v-if="!drawerFlg" class="drawerMenuArea">
             <div class="drawerdefault">
                 <div class="pallet">
                     <pallet-area
@@ -14,7 +14,7 @@
         </div>
 
         <transition name="popupMenu">
-            <div v-if="drawerFlg" class="drawerMenuWrapper">
+            <div v-if="drawerFlg" class="drawerMenuArea__Wrapper">
                 <div class="drawerMenu">
                     <!-- ここにメニューの内容を書いていく -->
                     <div class="drawerdefault">
@@ -56,7 +56,7 @@ export default class MainMenu extends Vue {
     }
 }
 </script>
-<style>
+<style lang="scss" scoped>
 .mainMenu {
     display: grid;
 }
@@ -74,14 +74,18 @@ export default class MainMenu extends Vue {
     transform: translate(0px, 0px);
     transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
 }
-.popupMenu-enter {
-    transform: translateY(75%);
-}
+
+$defaultHeight: 32px;
+$movedHeight: 230px;
+$movePercentage: 100% * (1 - $defaultHeight/$movedHeight);
+
+@debug $movePercentage;
+.popupMenu-enter,
 .popupMenu-leave-to {
-    transform: translateY(75%);
+    transform: translateY($movePercentage);
 }
 
-.drawerButtonArea {
+.drawerMenuArea {
     position: absolute;
     text-align: center;
     margin-left: auto;
@@ -91,10 +95,10 @@ export default class MainMenu extends Vue {
     left: 0;
     bottom: 0;
     width: 100%;
-    height: 10%;
+    height: $defaultHeight;
     background-color: rgba(233, 95, 192);
 }
-.drawerMenuWrapper {
+.drawerMenuArea__Wrapper {
     position: absolute;
     text-align: center;
     margin-left: auto;
@@ -104,7 +108,7 @@ export default class MainMenu extends Vue {
     left: 0;
     bottom: 0;
     width: 100%;
-    height: 40%;
+    height: $movedHeight;
     background-color: rgba(233, 95, 192);
 }
 </style>
