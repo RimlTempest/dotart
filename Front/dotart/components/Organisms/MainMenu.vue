@@ -1,6 +1,6 @@
 <template>
     <div class="mainMenu">
-        <div v-if="!drawerFlg" class="drawerMenuArea">
+        <div v-show="!drawerFlg" class="drawerMenuArea">
             <div class="drawerdefault">
                 <div
                     class="scroll"
@@ -11,7 +11,8 @@
                         class="palletArea"
                         :colorPallet="colorPallet"
                         :firstPalletIndex="firstPalletIndex"
-                        @getPalletColor="getPalletColor"
+                        :palletIndex="palletIndex"
+                        @getPalletColor="getPalletColorMethod"
                     ></pallet-area>
                 </div>
                 <button class="switch" v-on:click="translate">▲</button>
@@ -19,16 +20,21 @@
         </div>
 
         <transition name="popupMenu">
-            <div v-if="drawerFlg" class="drawerMenuArea__Wrapper">
+            <div v-show="drawerFlg" class="drawerMenuArea__Wrapper">
                 <div class="drawerMenu">
                     <!-- ここにメニューの内容を書いていく -->
                     <div class="drawerdefault">
-                        <div class="scroll" id="afterScrollArea">
+                        <div
+                            class="scroll"
+                            id="afterScrollArea"
+                            v-on:scroll="onScroll"
+                        >
                             <pallet-area
                                 class="palletArea"
                                 :colorPallet="colorPallet"
                                 :firstPalletIndex="firstPalletIndex"
-                                @getPalletColor="getPalletColor"
+                                :palletIndex="palletIndex"
+                                @getPalletColor="getPalletColorMethod"
                             ></pallet-area>
                         </div>
                         <button class="switch" v-on:click="translate">▼</button>
@@ -57,24 +63,45 @@ export default class MainMenu extends Vue {
     @Prop({ type: Function })
     getPalletColor!: Function;
 
+    palletIndex: number = this.firstPalletIndex;
+    selectingColor: string = this.colorPallet[this.palletIndex];
+
     scrollArea: HTMLDivElement | null = null;
     drawerFlg: boolean = false;
+    scrolled: number = 0;
 
-    public mounted(): void {
-        this.scrollArea = document.querySelector('#beforeScrollArea');
-        console.log('this.scrollArea');
-        this.scrollArea!.addEventListener('scroll', this.onScroll);
+    public created(): void {
+        return;
+    }
+
+    public getPalletColorMethod(newColor: string, newIndex: number): void {
+        this.selectingColor = newColor;
+        this.palletIndex = newIndex;
+        console.log(this.palletIndex);
+        this.getPalletColor(this.selectingColor, this.palletIndex);
         return;
     }
 
     public translate(): void {
         this.drawerFlg = !this.drawerFlg;
+        this.getScrollArea();
+        //this.scrollArea!.scrollLeft = this.scrolled;
         return;
     }
 
     public onScroll(e: any): void {
-        console.log(e);
+        this.getScrollArea();
+        this.scrolled = this.scrollArea!.scrollLeft;
         return;
+    }
+
+    public getScrollArea(): void {
+        if (!this.drawerFlg) {
+            this.scrollArea = document.querySelector('#beforeScrollArea');
+        } else {
+            this.scrollArea = document.querySelector('#afterScrollArea');
+        }
+        console.log(this.scrollArea);
     }
 }
 </script>

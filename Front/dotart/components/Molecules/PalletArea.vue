@@ -30,13 +30,11 @@ export default class PalletArea extends Vue {
     @Prop({ type: Number })
     firstPalletIndex!: number; // 最初に選択しているパレットの位置
 
-    palletIndex: number = this.firstPalletIndex;
-    selectingColor: string = this.colorPallet[this.palletIndex];
+    @Prop({ type: Number })
+    palletIndex!: number; // 最初に選択しているパレットの位置
 
     getPalletColor(newColor: string, newIndex: number): void {
-        this.selectingColor = newColor;
-        this.palletIndex = newIndex;
-        this.$emit('getPalletColor', this.selectingColor, this.palletIndex);
+        this.$emit('getPalletColor', newColor, newIndex);
     }
 }
 </script>

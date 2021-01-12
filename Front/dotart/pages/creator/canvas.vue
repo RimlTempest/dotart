@@ -151,10 +151,10 @@ export default class CanvasPage extends Vue {
     }
 
     /*
-  メソッド
-  引数 coor = キャンバス内のマウスのXY座標
-  引数 cell = ↑から出したグリッドの座標
-  */
+    メソッド
+    引数 coor = キャンバス内のマウスのXY座標
+    引数 cell = ↑から出したグリッドの座標
+    */
 
     // ペンのモードチェンジ
     modeChange(): void {
