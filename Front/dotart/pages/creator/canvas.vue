@@ -74,6 +74,10 @@ export default defineComponent({
     },
     setup() {
         const router = useRouter();
+ 
+        /* TODO: 回転、逆回転が以下のエラーで動いていないので修正する
+        * Write operation failed: computed value is readonly.
+        */
         const getRange = computed((): number => {
             return CanvasDataModule.canvasRange;
         });

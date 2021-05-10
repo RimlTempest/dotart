@@ -77,6 +77,10 @@ export default defineComponent({
             loadingFlg: false,
             errorFlg: false,
         });
+
+        /* TODO: ログイン実装に用いているnuxt/authのcontextが取れているはずなのに $auth でエラーが吐かれる
+         * Property '$auth' does not exist on type 'Store<any>'.
+         */
         const loginWithAuthModule = useAsync(() => {
             const { store } = useContext();
             flaggerState.loadingFlg = true;
