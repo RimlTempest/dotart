@@ -6,28 +6,30 @@
                 <v-card-title class="headline">新規作成</v-card-title>
 
                 <v-card-actions>
-                    <v-text-field v-model="user.userId" label="ユーザ名" />
+                    <v-text-field v-model="userState.userId" label="ユーザ名" />
                     <v-spacer />
                 </v-card-actions>
 
                 <v-card-actions>
                     <v-text-field
-                        v-model="user.password"
+                        v-model="userState.password"
                         label="パスワード"
                         :append-icon="passShowFlg ? 'mdi-eye' : 'mdi-eye-off'"
-                        :type="passShowFlg ? 'text' : 'password'"
+                        :type="passState.passShowFlg ? 'text' : 'password'"
                         hint="5文字以上入力してください。"
                         class="input-group--focused"
-                        @click:append="passShowFlg = !passShowFlg"
+                        @click:append="
+                            passState.passShowFlg = !passState.passShowFlg
+                        "
                     />
                     <v-spacer />
                 </v-card-actions>
 
                 <v-card-actions>
                     <v-text-field
-                        v-model="user.mail"
+                        v-model="userState.mail"
                         label="メールアドレス"
-                        :rules="[rules.required, rules.email]"
+                        :rules="[mailState.required, mailState.email]"
                     />
                     <v-spacer />
                 </v-card-actions>
@@ -36,9 +38,9 @@
                     <v-spacer />
                     <!-- @click="loginWithAuthModule" -->
                     <ConfirmDialog
-                        :user-id="user.userId"
-                        :password="user.password"
-                        :mail="user.mail"
+                        :user-id="userState.userId"
+                        :password="userState.password"
+                        :mail="userState.mail"
                     />
                 </v-card-actions>
             </v-form>
@@ -48,9 +50,9 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'nuxt-property-decorator';
+import { defineComponent, reactive } from '@nuxtjs/composition-api';
 import { User } from '@/types/User/UserType';
-import ConfirmDialog from '@/components/Signup/ConfirmDialog.vue';
+import ConfirmDialog from '@/components/signup/confirmDialog.vue';
 
 type Rules = {
     required: any;
@@ -58,35 +60,34 @@ type Rules = {
     email: any;
 };
 
-// Componentの読み込み
-@Component({
+export default defineComponent({
+    name: 'signUpPage',
     components: {
         ConfirmDialog,
     },
-})
-
-// TypeScriptの処理
-export default class SignupPage extends Vue {
-    // 入力情報
-    user: User = {
-        userId: '',
-        password: '',
-        mail: '',
-    };
-
-    // パスワード表示非表示フラグ
-    passShowFlg: boolean = false;
-    // メールアドレスのバリデート
-    rules: Rules = {
-        required: (value: any) => !!value || 'Required.',
-        counter: (value: any) =>
-            value.length <= 20 || '20文字以上は入力できません。',
-        email: (value: any) => {
-            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return (
-                pattern.test(value) || 'メールアドレスの形式になっていません。'
-            );
-        },
-    };
-}
+    setup() {
+        const userState = reactive<User>({
+            userId: '',
+            password: '',
+            mail: '',
+        });
+        const passState = reactive<{ passShowFlg: boolean }>({
+            // パスワード表示非表示フラグ
+            passShowFlg: false,
+        });
+        const mailState = reactive<Rules>({
+            required: (value: any) => !!value || 'Required.',
+            counter: (value: any) =>
+                value.length <= 20 || '20文字以上は入力できません。',
+            email: (value: any) => {
+                const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                return (
+                    pattern.test(value) ||
+                    'メールアドレスの形式になっていません。'
+                );
+            },
+        });
+        return { userState, passState, mailState };
+    },
+});
 </script>
