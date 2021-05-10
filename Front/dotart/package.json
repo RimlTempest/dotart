@@ -16,6 +16,7 @@
     "@nuxt/typescript-runtime": "^0.4.8",
     "@nuxtjs/auth": "^4.9.1",
     "@nuxtjs/axios": "^5.11.0",
+    "@nuxtjs/composition-api": "^0.23.4",
     "@nuxtjs/proxy": "^2.0.1",
     "cross-env": "^7.0.2",
     "nuxt": "^2.0.0",
