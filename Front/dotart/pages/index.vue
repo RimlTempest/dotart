@@ -4,7 +4,7 @@
             <v-container fluid>
                 <v-row dense>
                     <v-col
-                        v-for="card in cards"
+                        v-for="card in cardState.cards"
                         :key="card.title"
                         :cols="card.flex"
                     >
@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'nuxt-property-decorator';
+import { defineComponent, reactive } from '@nuxtjs/composition-api';
 
 type Cards = {
     title: string;
@@ -36,33 +36,38 @@ type Cards = {
     flex: number;
 };
 
-@Component({})
-export default class IndexPage extends Vue {
-    cards: Cards[] = [
-        {
-            title: 'ログイン',
-            subtitle: 'ログイン、新規登録はこちらから出来ます。',
-            link: '/login/',
-            flex: 12,
-        },
-        {
-            title: 'ドット絵クリエイター',
-            subtitle: 'ドット絵を作ってみよう！',
-            link: '/creator/',
-            flex: 12,
-        },
-        {
-            title: '投稿ページ',
-            subtitle: 'ドット絵の投稿ページ',
-            link: '/sns/',
-            flex: 6,
-        },
-        {
-            title: 'お知らせ',
-            subtitle: 'version 0.0.2β',
-            link: '/infomation',
-            flex: 6,
-        },
-    ];
-}
+export default defineComponent({
+    name: 'index',
+    setup() {
+        const cardState = reactive<{ cards: Cards[] }>({
+            cards: [
+                {
+                    title: 'ログイン',
+                    subtitle: 'ログイン、新規登録はこちらから出来ます。',
+                    link: '/login/',
+                    flex: 12,
+                },
+                {
+                    title: 'ドット絵クリエイター',
+                    subtitle: 'ドット絵を作ってみよう！',
+                    link: '/creator/',
+                    flex: 12,
+                },
+                {
+                    title: '投稿ページ',
+                    subtitle: 'ドット絵の投稿ページ',
+                    link: '/sns/',
+                    flex: 6,
+                },
+                {
+                    title: 'お知らせ',
+                    subtitle: 'version 0.0.2β',
+                    link: '/infomation',
+                    flex: 6,
+                },
+            ],
+        });
+        return { cardState };
+    },
+});
 </script>

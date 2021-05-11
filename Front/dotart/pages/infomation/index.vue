@@ -1,7 +1,7 @@
 <template>
     <v-carousel height="650" hide-delimiter-background show-arrows-on-hover>
-        <v-carousel-item v-for="(slide, i) in slides" :key="i">
-            <v-sheet :color="colors[i]" height="100%">
+        <v-carousel-item v-for="(slide, i) in slidesState.slides" :key="i">
+            <v-sheet :color="slidesState.colors[i]" height="100%">
                 <v-row class="fill-height" align="center" justify="center">
                     <v-card class="card" height="600" width="1000" outlined>
                         <v-list-item three-line>
@@ -66,18 +66,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator';
-// import { counterModule } from '@/store/modules/counter';
+import { defineComponent, reactive } from '@nuxtjs/composition-api';
 
-@Component({
-    // middleware: 'auth'
-})
-
-// vuexのサンプルのコード
-export default class Counter extends Vue {
-    colors = ['indigo', 'warning', 'pink darken-2', 'red lighten-1'];
-    slides = ['ドット絵アプリ　DotArt', 'アプリ概要', '技術', ''];
-}
+export default defineComponent({
+    name: 'infoPage',
+    setup() {
+        const slidesState = reactive({
+            colors: ['indigo', 'warning', 'pink darken-2', 'red lighten-1'],
+            slides: ['ドット絵アプリ　DotArt', 'アプリ概要', '技術', ''],
+        });
+        return { slidesState };
+    },
+});
 </script>
 
 <style lang="scss" scoped>

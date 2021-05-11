@@ -42,8 +42,8 @@
                                     >保存するサイズを指定できます</v-card-subtitle
                                 >
                                 <v-select
-                                    v-model="selectedSize"
-                                    :items="sizeListItems"
+                                    v-model="setCanvasState.selectedSize"
+                                    :items="setCanvasState.sizeListItems"
                                     label="画像サイズ"
                                     return-object
                                 ></v-select>
@@ -63,7 +63,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'nuxt-property-decorator';
+import {
+    defineComponent,
+    reactive,
+    computed,
+    ComputedRef,
+    onMounted,
+} from '@nuxtjs/composition-api';
 import { CanvasDataModule } from '@/store/modules/canvasData';
 
 type SelectedSize = {
@@ -76,149 +82,195 @@ type SizeListItems = {
     magnification: number;
 };
 
-@Component({
-    // middleware: 'auth'
-})
-// TypeScriptの処理
-export default class CreatorPage extends Vue {
-    get getCanvasName(): string {
-        return CanvasDataModule.canvasName;
-    }
+export default defineComponent({
+    name: 'SavePage',
+    setup() {
+        const getCanvasName = computed((): string => {
+            return CanvasDataModule.canvasName;
+        });
+        const getRange = computed((): number => {
+            return CanvasDataModule.canvasRange;
+        });
+        const getMagnification = computed((): number => {
+            return CanvasDataModule.canvasMagnification;
+        });
+        const getColorPallet = computed((): string[] => {
+            return CanvasDataModule.palletColor;
+        });
+        const getCanvasIndexData = computed((): number[] => {
+            return CanvasDataModule.canvasIndexData;
+        });
+        const canvasState = reactive<{
+            canvasName: ComputedRef<string>;
+            canvasRange: ComputedRef<number>;
+            canvasMagnification: ComputedRef<number>;
+            saveCanvasMagnification: ComputedRef<number>;
+            colorPallet: ComputedRef<string[]>;
+            canvasIndexData: ComputedRef<number[]>;
+            previewCanvas: HTMLCanvasElement | null;
+            previewCanvasCtx: CanvasRenderingContext2D | null;
+            saveCanvas: HTMLCanvasElement | null;
+            saveCanvasCtx: CanvasRenderingContext2D | null;
+        }>({
+            canvasName: getCanvasName, // キャンバスの名前
+            canvasRange: getRange, // ドット絵のサイズ
+            canvasMagnification: getMagnification, // 元の倍率
+            saveCanvasMagnification: getMagnification, // 保存時の倍率
+            colorPallet: getColorPallet,
+            canvasIndexData: getCanvasIndexData,
+            previewCanvas: null, // イラストを表示するキャンバス
+            previewCanvasCtx: null, // ↑のコンテキスト
+            saveCanvas: null, // 画像サイズ変更のためのキャンバス
+            saveCanvasCtx: null, // ↑のコンテキスト
+        });
+        const setCanvasState = reactive<{
+            maxMagnification: number;
+            canvasStyleSize: number;
+            selectedSize: SelectedSize;
+            sizeListItems: SizeListItems[];
+        }>({
+            maxMagnification: (384 / canvasState.canvasRange) * 2, // 画像サイズ変更の際の最大サイズを指定
+            canvasStyleSize: 334, // キャンバスの外見上のサイズ
+            selectedSize: {
+                text:
+                    canvasState.canvasRange * canvasState.canvasMagnification +
+                    '×' +
+                    canvasState.canvasRange * canvasState.canvasMagnification,
+                magnification: canvasState.canvasMagnification,
+            },
 
-    get getRange(): number {
-        return CanvasDataModule.canvasRange;
-    }
+            // 画像サイズと、その画像サイズにするための倍率のリスト
+            sizeListItems: [
+                {
+                    text:
+                        canvasState.canvasRange + '×' + canvasState.canvasRange,
+                    magnification: 1,
+                },
+            ],
+        });
 
-    get getMagnification(): number {
-        return CanvasDataModule.canvasMagnification;
-    }
+        // ドット絵のサイズ、表示倍率、キャンバスのデータ、パレットのデータから対象のcanvasにドット絵の描画
+        const draw = (
+            range: number,
+            magnification: number,
+            context: any
+        ): void => {
+            for (let i = 0; i < range; i++) {
+                for (let j = 0; j < range; j++) {
+                    context.fillStyle =
+                        canvasState.colorPallet[
+                            canvasState.canvasIndexData[j * range + i]
+                        ];
+                    context.fillRect(
+                        i * magnification,
+                        j * magnification,
+                        magnification,
+                        magnification
+                    );
+                }
+            }
+        };
 
-    get getColorPallet(): string[] {
-        return CanvasDataModule.palletColor;
-    }
+        onMounted(() => {
+            canvasState.previewCanvas = document.querySelector('#resultcanvas');
+            canvasState.previewCanvasCtx = canvasState.previewCanvas!.getContext(
+                '2d'
+            );
+            canvasState.previewCanvas!.style.width =
+                setCanvasState.canvasStyleSize + 'px';
+            canvasState.previewCanvas!.style.height =
+                setCanvasState.canvasStyleSize + 'px';
+            canvasState.previewCanvas!.style.border = '1px solid rgb(0,0,0)';
+            canvasState.saveCanvas = document.querySelector('#savecanvas');
+            canvasState.saveCanvasCtx = canvasState.saveCanvas!.getContext(
+                '2d'
+            )!;
 
-    get getCanvasIndexData(): number[] {
-        return CanvasDataModule.canvasIndexData;
-    }
+            draw(
+                canvasState.canvasRange,
+                canvasState.canvasMagnification,
+                canvasState.previewCanvasCtx
+            );
 
-    canvasName: string = this.getCanvasName; // キャンバスの名前
-    canvasRange: number = this.getRange; // ドット絵のサイズ
-    canvasMagnification: number = this.getMagnification; // 元の倍率
-    saveCanvasMagnification: number = this.getMagnification; // 保存時の倍率
-    colorPallet: string[] = this.getColorPallet;
-    canvasIndexData: number[] = this.getCanvasIndexData;
-    previewCanvas: HTMLCanvasElement | null = null; // イラストを表示するキャンバス
-    previewCanvasCtx: CanvasRenderingContext2D | null = null; // ↑のコンテキスト
-    saveCanvas: HTMLCanvasElement | null = null; // 画像サイズ変更のためのキャンバス
-    saveCanvasCtx: CanvasRenderingContext2D | null = null; // ↑のコンテキスト
-    maxMagnification = (384 / this.canvasRange) * 2; // 画像サイズ変更の際の最大サイズを指定
-    canvasStyreSize: number = 334; // キャンバスの外見上のサイズ
-    // 最初に選択されてるサイズ
-    selectedSize: SelectedSize = {
-        text:
-            this.canvasRange * this.canvasMagnification +
-            '×' +
-            this.canvasRange * this.canvasMagnification,
-        magnification: this.canvasMagnification,
-    };
-
-    // 画像サイズと、その画像サイズにするための倍率のリスト
-    sizeListItems: SizeListItems[] = [
-        {
-            text: this.canvasRange + '×' + this.canvasRange,
-            magnification: 1,
-        },
-    ];
-
-    public mounted(): void {
-        this.previewCanvas = document.querySelector('#resultcanvas');
-        this.previewCanvasCtx = this.previewCanvas!.getContext('2d');
-        this.previewCanvas!.style.width = this.canvasStyreSize + 'px';
-        this.previewCanvas!.style.height = this.canvasStyreSize + 'px';
-        this.previewCanvas!.style.border = '1px solid rgb(0,0,0)';
-        this.saveCanvas = document.querySelector('#savecanvas');
-        this.saveCanvasCtx = this.saveCanvas!.getContext('2d')!;
-        this.draw(
-            this.canvasRange,
-            this.canvasMagnification,
-            this.previewCanvasCtx
-        );
-
-        // 画像サイズのリスト生成
-        // TODO: i = i * 2
-        for (let i = 2; i <= 32; i = i * 2) {
-            this.sizeListItems.push({
-                text: this.canvasRange * i + '×' + this.canvasRange * i,
-                magnification: i,
+            // 画像サイズのリスト生成
+            // TODO: i = i * 2
+            for (let i = 2; i <= 32; i = i * 2) {
+                setCanvasState.sizeListItems.push({
+                    text:
+                        canvasState.canvasRange * i +
+                        '×' +
+                        canvasState.canvasRange * i,
+                    magnification: i,
+                });
+            }
+            setCanvasState.sizeListItems.push({
+                text:
+                    canvasState.canvasRange * canvasState.canvasMagnification +
+                    '×' +
+                    canvasState.canvasRange * canvasState.canvasMagnification,
+                magnification: canvasState.canvasMagnification,
             });
-        }
-        this.sizeListItems.push({
-            text:
-                this.canvasRange * this.canvasMagnification +
-                '×' +
-                this.canvasRange * this.canvasMagnification,
-            magnification: this.canvasMagnification,
+
+            // 並べ替え
+            setCanvasState.sizeListItems.sort(function (
+                a: SizeListItems,
+                b: SizeListItems
+            ): number {
+                if (a.magnification < b.magnification) {
+                    return -1;
+                }
+                if (a.magnification > b.magnification) {
+                    return 1;
+                }
+                return 0;
+            });
         });
 
-        // 並べ替え
-        this.sizeListItems.sort(function (
-            a: SizeListItems,
-            b: SizeListItems
-        ): number {
-            if (a.magnification < b.magnification) {
-                return -1;
-            }
-            if (a.magnification > b.magnification) {
-                return 1;
-            }
-            return 0;
-        });
-    }
+        // 選んだ倍率からドット絵を描画し、画像として保存する
+        const saveImage = (): void => {
+            canvasState.saveCanvasMagnification =
+                setCanvasState.selectedSize.magnification;
+            canvasState.saveCanvas!.width =
+                canvasState.canvasRange * canvasState.saveCanvasMagnification;
+            canvasState.saveCanvas!.height =
+                canvasState.canvasRange * canvasState.saveCanvasMagnification;
+            // 画像を拡大するのではなく倍率を変えて再描画してるので画質の劣化はないと思う
+            draw(
+                canvasState.canvasRange,
+                canvasState.saveCanvasMagnification,
+                canvasState.saveCanvasCtx
+            );
+            // if (this.saveCanvas.msToBlob) {
+            // なんかIE11だとこれないと困るらしいけどHTMLCanvasElementだと書き方変わるみたいで困っちゃったねえ～
+            // ぶっちゃけこれから消される運命のブラウザなんて無視していいと思うんだけどおまえどう？
+            // IE11は滅びるべきなので対応しなくてOK
+            //  const blob = this.saveCanvas.msToBlob()
+            //  window.navigator.msSaveBlob(blob, this.canvasName + '.png')
+            // } else {
+            // 画像データを対象にしたリンクを生成し、クリックしたことにする
+            const link = document.createElement('a');
+            link.href = canvasState.saveCanvas!.toDataURL('image/png')!;
+            link.download =
+                canvasState.canvasName +
+                ':' +
+                setCanvasState.selectedSize.text +
+                '.png';
+            link.click();
+            // }
+        };
 
-    // ドット絵のサイズ、表示倍率、キャンバスのデータ、パレットのデータから対象のcanvasにドット絵の描画
-    draw(range: number, magnification: number, context: any): void {
-        for (let i = 0; i < range; i++) {
-            for (let j = 0; j < range; j++) {
-                context.fillStyle = this.colorPallet[
-                    this.canvasIndexData[j * range + i]
-                ];
-                context.fillRect(
-                    i * magnification,
-                    j * magnification,
-                    magnification,
-                    magnification
-                );
-            }
-        }
-    }
-
-    // 選んだ倍率からドット絵を描画し、画像として保存する
-    saveImage(): void {
-        this.saveCanvasMagnification = this.selectedSize.magnification;
-        this.saveCanvas!.width =
-            this.canvasRange * this.saveCanvasMagnification;
-        this.saveCanvas!.height =
-            this.canvasRange * this.saveCanvasMagnification;
-        // 画像を拡大するのではなく倍率を変えて再描画してるので画質の劣化はないと思う
-        this.draw(
-            this.canvasRange,
-            this.saveCanvasMagnification,
-            this.saveCanvasCtx
-        );
-        // if (this.saveCanvas.msToBlob) {
-        // なんかIE11だとこれないと困るらしいけどHTMLCanvasElementだと書き方変わるみたいで困っちゃったねえ～
-        // ぶっちゃけこれから消される運命のブラウザなんて無視していいと思うんだけどおまえどう？
-        //  const blob = this.saveCanvas.msToBlob()
-        //  window.navigator.msSaveBlob(blob, this.canvasName + '.png')
-        // } else {
-        // 画像データを対象にしたリンクを生成し、クリックしたことにする
-        const link = document.createElement('a');
-        link.href = this.saveCanvas!.toDataURL('image/png')!;
-        link.download = this.canvasName + ':' + this.selectedSize.text + '.png';
-        link.click();
-        // }
-    }
-}
+        return {
+            getCanvasName,
+            getRange,
+            getMagnification,
+            getColorPallet,
+            getCanvasIndexData,
+            canvasState,
+            setCanvasState,
+            saveImage,
+        };
+    },
+});
 </script>
 
 <style lang="scss" scoped>
