@@ -25,7 +25,7 @@
                                 class="palletArea"
                                 :color-pallet="colorPallet"
                                 :first-pallet-index="firstPalletIndex"
-                                @getPalletColor="getPalletColor"
+                                @getPalletColor="getPalletColorMethod"
                             ></pallet-area>
                         </div>
                         <button class="switch" @click="translate">▼</button>
@@ -88,6 +88,13 @@ export default class MainMenu extends Vue {
             this.scrollArea = document.querySelector('#afterScrollArea');
         }
         console.log(this.scrollArea);
+    }
+
+    public getPalletColorMethod(newColor: string, newIndex: number): void {
+        this.selectingColor = newColor;
+        this.palletIndex = newIndex;
+        console.log(this.palletIndex);
+        this.getPalletColor(this.selectingColor, this.palletIndex);
     }
 }
 </script>
