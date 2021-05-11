@@ -1,5 +1,5 @@
 <template>
-    <v-app dark>
+    <v-app dark class="dot">
         <!-- appbar  :clipped-left="clipped"-->
         <v-app-bar color="primary" fixed app>
             <v-toolbar-title
@@ -65,5 +65,8 @@ export default class DefaultPage extends Vue {
 <style lang="scss" scoped>
 .cousor {
     cursor: pointer;
+}
+.dot {
+    font-family: 'Dot Font';
 }
 </style>

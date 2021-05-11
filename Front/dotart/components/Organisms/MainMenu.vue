@@ -2,19 +2,15 @@
     <div class="mainMenu">
         <div v-if="!drawerFlg" class="drawerMenuArea">
             <div class="drawerdefault">
-                <div
-                    class="scroll"
-                    id="beforeScrollArea"
-                    v-on:scroll="onScroll"
-                >
+                <div id="beforeScrollArea" class="scroll" @scroll="onScroll">
                     <pallet-area
                         class="palletArea"
-                        :colorPallet="colorPallet"
-                        :firstPalletIndex="firstPalletIndex"
+                        :color-pallet="colorPallet"
+                        :first-pallet-index="firstPalletIndex"
                         @getPalletColor="getPalletColor"
                     ></pallet-area>
                 </div>
-                <button class="switch" v-on:click="translate">▲</button>
+                <button class="switch" @click="translate">▲</button>
             </div>
         </div>
 
@@ -23,15 +19,15 @@
                 <div class="drawerMenu">
                     <!-- ここにメニューの内容を書いていく -->
                     <div class="drawerdefault">
-                        <div class="scroll" id="afterScrollArea">
+                        <div id="afterScrollArea" class="scroll">
                             <pallet-area
                                 class="palletArea"
-                                :colorPallet="colorPallet"
-                                :firstPalletIndex="firstPalletIndex"
+                                :color-pallet="colorPallet"
+                                :first-pallet-index="firstPalletIndex"
                                 @getPalletColor="getPalletColor"
                             ></pallet-area>
                         </div>
-                        <button class="switch" v-on:click="translate">▼</button>
+                        <button class="switch" @click="translate">▼</button>
                     </div>
                 </div>
             </div>
@@ -44,16 +40,18 @@ import { Vue, Component, Prop } from 'nuxt-property-decorator';
 import PalletArea from '@/components/Molecules/PalletArea.vue';
 
 @Component({
-    //middleware: 'auth',
+    // middleware: 'auth',
     components: {
         PalletArea,
     },
 })
 export default class MainMenu extends Vue {
     @Prop({ type: Array })
-    colorPallet!: string[]; //ページから渡されるパレットの色の配列
+    colorPallet!: string[]; // ページから渡されるパレットの色の配列
+
     @Prop({ type: Number })
-    firstPalletIndex!: number; //最初に選択しているパレットの位置
+    firstPalletIndex!: number; // 最初に選択しているパレットの位置
+
     @Prop({ type: Function })
     getPalletColor!: Function;
 
@@ -64,17 +62,14 @@ export default class MainMenu extends Vue {
         this.scrollArea = document.querySelector('#beforeScrollArea');
         console.log('this.scrollArea');
         this.scrollArea!.addEventListener('scroll', this.onScroll);
-        return;
     }
 
     public translate(): void {
         this.drawerFlg = !this.drawerFlg;
-        return;
     }
 
     public onScroll(e: any): void {
         console.log(e);
-        return;
     }
 }
 </script>

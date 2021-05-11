@@ -1,11 +1,15 @@
 <template>
     <v-layout column justify-center align-center>
         <!-- プログレスバー -->
-        <v-overlay v-if="flag.loadingFlg" :absolute="absolute" :value="overlay">
+        <v-overlay
+            v-if="flaggerState.loadingFlg"
+            :absolute="flaggerState.loadingFlg"
+            :value="flaggerState.loadingFlg"
+        >
             <v-progress-circular indeterminate color="primary" />
         </v-overlay>
 
-        <div v-if="flag.errorFlg">
+        <div v-if="flaggerState.errorFlg">
             <v-alert dense outlined type="error"
                 >ユーザID、パスワード、メールアドレスいずれかが条件を満たしていません。</v-alert
             >
@@ -19,13 +23,13 @@
                 </v-card-text>
 
                 <v-card-actions>
-                    <v-text-field v-model="user.userId" label="ユーザ名" />
+                    <v-text-field v-model="userState.userId" label="ユーザ名" />
                     <v-spacer />
                 </v-card-actions>
 
                 <v-card-actions>
                     <v-text-field
-                        v-model="user.password"
+                        v-model="userState.password"
                         type="password"
                         label="パスワード"
                     />
@@ -46,7 +50,12 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'nuxt-property-decorator';
+import {
+    defineComponent,
+    reactive,
+    useAsync,
+    useContext,
+} from '@nuxtjs/composition-api';
 
 type User = {
     userId: string;
@@ -57,53 +66,51 @@ type Flagger = {
     errorFlg: boolean;
 };
 
-// Componentの読み込み
-@Component({})
+export default defineComponent({
+    name: 'signInPage',
+    setup() {
+        const userState = reactive<User>({
+            userId: '',
+            password: '',
+        });
+        const flaggerState = reactive<Flagger>({
+            loadingFlg: false,
+            errorFlg: false,
+        });
 
-// TypeScriptの処理
-export default class SigninPage extends Vue {
-    user: User = {
-        userId: '',
-        password: '',
-    };
-
-    flag: Flagger = {
-        loadingFlg: false,
-        errorFlg: false,
-    };
-    // UserId: User = ''
-    // Password: User = ''
-    // プログレスバー
-    // loadingflg: boolean = false
-    // errorflg: boolean = false
-
-    // methods
-    async loginWithAuthModule() {
-        this.flag.loadingFlg = true;
-        await this.$auth
-            .loginWith('local', {
-                data: {
-                    userId: this.user.userId,
-                    password: this.user.password,
-                },
-            })
-            .then(
-                (response: any) => {
-                    console.log(`LOGIN_SUCCESS : `);
-                    // console.log(response)
-                    this.$nuxt.setLayout('default');
-                    this.flag.errorFlg = false;
-                    this.flag.loadingFlg = false;
-                    return response;
-                },
-                (error: any) => {
-                    console.log(this.user.password);
-                    console.log(`LOGIN_ERROR : ${error}`);
-                    this.flag.errorFlg = true;
-                    this.flag.loadingFlg = false;
-                    return error;
-                }
-            );
-    }
-}
+        /* TODO: ログイン実装に用いているnuxt/authのcontextが取れているはずなのに $auth でエラーが吐かれる
+         * Property '$auth' does not exist on type 'Store<any>'.
+         */
+        const loginWithAuthModule = useAsync(() => {
+            const { store } = useContext();
+            flaggerState.loadingFlg = true;
+            // console.log(store.$auth);
+            store.$auth
+                .loginWith('local', {
+                    data: {
+                        userId: userState.userId,
+                        password: userState.password,
+                    },
+                })
+                .then(
+                    (response: any) => {
+                        console.log(`LOGIN_SUCCESS : `);
+                        // console.log(response)
+                        // store.state.nuxt.setLayout('default');
+                        flaggerState.errorFlg = false;
+                        flaggerState.loadingFlg = false;
+                        return response;
+                    },
+                    (error: any) => {
+                        console.log(userState.password);
+                        console.log(`LOGIN_ERROR : ${error}`);
+                        flaggerState.errorFlg = true;
+                        flaggerState.loadingFlg = false;
+                        return error;
+                    }
+                );
+        });
+        return { userState, flaggerState, loginWithAuthModule };
+    },
+});
 </script>

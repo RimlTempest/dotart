@@ -1,14 +1,14 @@
 <template>
-    <div class="canvas-wrapper" id="canvasWrapper">
+    <div id="canvasWrapper" class="canvas-wrapper">
         <canvas
-            class="drow-canvas"
             id="drowcanvas"
+            class="drow-canvas"
             width="384px"
             height="384px"
         ></canvas>
         <canvas
-            class="drow-canvas"
             id="gridcanvas"
+            class="drow-canvas"
             width="383px"
             height="383px"
             @mousedown="click"
