@@ -102,6 +102,6 @@ export default class ButtonArea extends Vue {
 <style lang="scss" scoped>
 .saveButton {
     text-align: center;
-    margin-top: 5%;
+    margin-top: 2%;
 }
 </style>
