@@ -93,7 +93,7 @@ const nuxtConfig: Configuration = {
         ],
     },
     workbox: {
-        swDest: 'static/sw.js',
+        swDest: '/sw.js',
         dev: true,
     },
     // workbox: {
