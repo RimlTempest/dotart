@@ -4,6 +4,15 @@
             <v-container fluid>
                 <v-row dense>
                     <v-col cols="12">
+                        <v-card light hover max-width="1000" class="card">
+                            <v-form ref="form" lazy-validation>
+                                <v-card-title class="card">
+                                    画像保存
+                                </v-card-title>
+                            </v-form>
+                        </v-card>
+                    </v-col>
+                    <v-col cols="12">
                         <div class="ResultCanvas">
                             <canvas
                                 id="resultcanvas"
@@ -25,16 +34,6 @@
                     <v-col cols="12">
                         <v-card light hover max-width="1000" class="card">
                             <v-form ref="form" lazy-validation>
-                                <v-card-title class="card">
-                                    画像保存
-                                </v-card-title>
-                            </v-form>
-                        </v-card>
-                    </v-col>
-
-                    <v-col cols="12">
-                        <v-card light hover max-width="1000" class="card">
-                            <v-form ref="form" lazy-validation>
                                 <v-card-title class="headline"
                                     >画像サイズ指定</v-card-title
                                 >
@@ -47,8 +46,7 @@
                                     label="画像サイズ"
                                     return-object
                                 ></v-select>
-                                <v-card-actions>
-                                    <v-spacer />
+                                <v-card-actions style="justify-content: center">
                                     <v-btn color="primary" @click="saveImage"
                                         >保存</v-btn
                                     >
@@ -276,10 +274,18 @@ export default defineComponent({
 <style lang="scss" scoped>
 .card {
     justify-content: center;
+    padding: 5%;
 }
 .ResultCanvas {
     position: relative;
     top: -15px;
+    text-align: center;
+}
+
+.ResultCanvas::before {
+    content: '';
+    display: block;
+    padding-top: 10%;
 }
 
 .SaveCanvas {

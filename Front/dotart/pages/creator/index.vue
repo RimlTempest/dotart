@@ -76,14 +76,22 @@
                                     label="キャンバスサイズ"
                                     return-object
                                 ></v-select>
-                                <v-card-actions>
+                                <!-- <v-card-actions>
                                     <v-spacer />
                                     <v-btn color="primary" @click="startDraw"
-                                        >start</v-btn
+                                        >作成する</v-btn
                                     >
-                                </v-card-actions>
+                                </v-card-actions> -->
                             </v-form>
                         </v-card>
+                    </v-col>
+                    <v-col cols="12" style="text-align: center">
+                        <v-btn
+                            color="primary"
+                            class="createButton"
+                            @click="startDraw"
+                            >作成する</v-btn
+                        >
                     </v-col>
                 </v-row>
             </v-container>
@@ -232,10 +240,13 @@ export default defineComponent({
 <style lang="scss" scoped>
 .card {
     justify-content: center;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 .palletPreview {
     display: flex;
     pointer-events: none;
+    padding-bottom: 10px;
     &__Color {
         display: flex;
         width: 20px;
@@ -244,5 +255,8 @@ export default defineComponent({
         pointer-events: none;
         border-radius: 30%;
     }
+}
+.createButton {
+    margin: 5%;
 }
 </style>

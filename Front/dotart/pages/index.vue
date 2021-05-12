@@ -18,6 +18,10 @@
                             <v-card-subtitle
                                 v-text="card.subtitle"
                             ></v-card-subtitle>
+                            <v-divider class="mx-4"></v-divider>
+                            <v-card-text v-if="card.infomation != null">
+                                <div>{{ card.infomation }}</div>
+                            </v-card-text>
                         </v-card>
                     </v-col>
                 </v-row>
@@ -33,6 +37,7 @@ type Cards = {
     title: string;
     subtitle: string;
     link: string;
+    infomation: string | null;
     flex: number;
 };
 
@@ -41,29 +46,31 @@ export default defineComponent({
     setup() {
         const cardState = reactive<{ cards: Cards[] }>({
             cards: [
-                {
-                    title: 'ログイン',
-                    subtitle: 'ログイン、新規登録はこちらから出来ます。',
-                    link: '/login/',
-                    flex: 12,
-                },
+                // {
+                //     title: 'ログイン',
+                //     subtitle: 'ログイン、新規登録はこちらから出来ます。',
+                //     link: '/login/',
+                //     flex: 12,
+                // },
                 {
                     title: 'ドット絵クリエイター',
                     subtitle: 'ドット絵を作ってみよう！',
                     link: '/creator/',
+                    infomation: null,
                     flex: 12,
                 },
-                {
-                    title: '投稿ページ',
-                    subtitle: 'ドット絵の投稿ページ',
-                    link: '/sns/',
-                    flex: 6,
-                },
+                // {
+                //     title: '投稿ページ',
+                //     subtitle: 'ドット絵の投稿ページ',
+                //     link: '/sns/',
+                //     flex: 6,
+                // },
                 {
                     title: 'お知らせ',
-                    subtitle: 'version 0.0.2β',
-                    link: '/infomation',
-                    flex: 6,
+                    subtitle: 'version 0.0.5β',
+                    link: '/',
+                    infomation: '現在テスト環境です。\nバグ等あるかもしれませんがご了承ください。',
+                    flex: 12,
                 },
             ],
         });

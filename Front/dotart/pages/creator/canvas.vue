@@ -1,10 +1,10 @@
 <template>
     <v-layout column justify-center align-center>
-        <v-flex xs12 sm12 md12>
+        <v-flex xs12 sm12 md12 style="text-align: center">
             <v-container fluid>
                 <v-row dense>
                     <v-col cols="12">
-                        <div class="DrowCanvas">
+                        <!-- <div class="DrowCanvas">
                             <canvas
                                 id="drowcanvas"
                                 width="384px"
@@ -24,9 +24,39 @@
                                     @touchend="onDragEnd"
                                 ></canvas>
                             </div>
+                        </div> -->
+                        <div class="DrowCanvas">
+                            <div class="DrowCanvas__Draw">
+                                <canvas
+                                    id="drowcanvas"
+                                    width="384px"
+                                    height="384px"
+                                ></canvas>
+                            </div>
+                            <div class="DrowCanvas__Grid">
+                                <canvas
+                                    id="gridcanvas"
+                                    width="383px"
+                                    height="383px"
+                                    @mousedown="onClick"
+                                    @mouseup="onDragEnd"
+                                    @mouseout="onDragEnd"
+                                    @mousemove="onMouseMove"
+                                    @touchstart="onTouch"
+                                    @touchmove="onSwipe"
+                                    @touchend="onDragEnd"
+                                ></canvas>
+                            </div>
                         </div>
                     </v-col>
                 </v-row>
+
+                <pallet-area
+                    class="palletArea"
+                    :color-pallet="palletState.colorPallet"
+                    :first-pallet-index="palletState.palletIndex"
+                    @getPalletColor="getPalletColor"
+                ></pallet-area>
 
                 <button-area
                     :pen-mode="canvasSettingState.penMode"
@@ -39,11 +69,11 @@
                     :anticlock-rotate="antiClockRotate"
                 ></button-area>
 
-                <main-menu
+                <!-- <main-menu
                     :color-pallet="palletState.colorPallet"
                     :first-pallet-index="palletState.palletIndex"
                     :get-pallet-color="getPalletColor"
-                ></main-menu>
+                ></main-menu> -->
             </v-container>
         </v-flex>
     </v-layout>
@@ -64,13 +94,15 @@ import { Point } from '@/types/Canvas/PointType';
 import { Stack } from '@/types/Canvas/StackType';
 import { CanvasDataModule } from '@/store/modules/canvasData';
 import ButtonArea from '@/components/Molecules/ButtonArea.vue';
-import MainMenu from '@/components/Organisms/MainMenu.vue';
+import PalletArea from '@/components/Molecules/PalletArea.vue';
+// import MainMenu from '@/components/Organisms/MainMenu.vue';
 
 export default defineComponent({
     name: 'canvasPage',
     components: {
         ButtonArea,
-        MainMenu,
+        PalletArea,
+        // MainMenu,
     },
     setup() {
         const router = useRouter();
@@ -693,12 +725,35 @@ export default defineComponent({
 <style lang="scss" scoped>
 .DrowCanvas {
     position: relative;
-    top: -15px;
+    // top: -15px;
     &__Grid {
         position: absolute;
         opacity: 0.5;
         top: 0px;
-        left: 0px;
+        // left: 0px;
+        left: 50%;
+        transform: translateX(-50%);
+        -webkit-transform: translateX(-50%);
+        -ms-transform: translateX(-50%);
+    }
+    &__Draw {
+        position: absolute;
+        top: 0px;
+        left: 50%;
+        transform: translateX(-50%);
+        -webkit-transform: translateX(-50%);
+        -ms-transform: translateX(-50%);
+    }
+}
+.DrowCanvas::before {
+    content: '';
+    display: block;
+    padding-top: 100%;
+    @media screen and (min-width: 768px) and (max-width: 1024px) {
+        padding-top: 50%;
+    }
+    @media screen and (min-width: 1024px) {
+        padding-top: 50%;
     }
 }
 </style>

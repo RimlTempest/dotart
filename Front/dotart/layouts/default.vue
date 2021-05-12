@@ -10,12 +10,14 @@
             <!--<v-img src="/logo.svg" aspect-ratio="1.7" @></v-img>-->
             <v-spacer />
             <!-- <div v-if="(this as any).$auth.loggedIn">test</div> -->
-            <div v-if="!this.$store.state.auth.loggedIn">
+
+            <!-- staging環境ではログインを動かさない -->
+            <!-- <div v-if="!this.$store.state.auth.loggedIn">
                 <LoginMenu />
             </div>
             <div v-else>
                 <LogoutMenu />
-            </div>
+            </div> -->
         </v-app-bar>
         <!-- main -->
         <v-content>
@@ -34,13 +36,13 @@
 
 <script lang="ts">
 import { Vue, Component } from 'nuxt-property-decorator';
-import LogoutMenu from '@/components/Organisms/LogoutMenu.vue';
-import LoginMenu from '@/components/Organisms/LoginMenu.vue';
+// import LogoutMenu from '@/components/Organisms/LogoutMenu.vue';
+// import LoginMenu from '@/components/Organisms/LoginMenu.vue';
 
 @Component({
     components: {
-        LoginMenu,
-        LogoutMenu,
+        // LoginMenu,
+        // LogoutMenu,
     },
 })
 export default class DefaultPage extends Vue {

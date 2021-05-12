@@ -1,5 +1,24 @@
 <template>
-    <div
+    <v-card
+        :color="color"
+        class="ma-4"
+        height="50"
+        width="50"
+        @click="toggle"
+        @mousedown="getColor"
+    >
+        <v-row class="fill-height" align="center" justify="center">
+            <v-scale-transition>
+                <v-icon
+                    v-if="active"
+                    color="white"
+                    size="25"
+                    v-text="'mdi-palette'"
+                ></v-icon>
+            </v-scale-transition>
+        </v-row>
+    </v-card>
+    <!-- <div
         class="pallet"
         :style="{
             background: color,
@@ -9,7 +28,7 @@
             height: height,
         }"
         @mousedown="getColor"
-    ></div>
+    ></div> -->
 </template>
 
 <script lang="ts">
@@ -25,6 +44,12 @@ export default class Pallet extends Vue {
 
     @Prop({ type: Number })
     selectedIndex!: number;
+
+    @Prop({ type: Boolean })
+    toggle!: boolean;
+
+    @Prop({ type: Boolean })
+    active!: boolean;
 
     margin: string = '2px';
     width: string = '23px';

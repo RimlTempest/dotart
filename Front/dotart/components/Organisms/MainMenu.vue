@@ -5,9 +5,9 @@
                 <div id="beforeScrollArea" class="scroll" @scroll="onScroll">
                     <pallet-area
                         class="palletArea"
-                        :colorPallet="colorPallet"
-                        :firstPalletIndex="firstPalletIndex"
-                        :palletIndex="palletIndex"
+                        :color-pallet="colorPallet"
+                        :first-pallet-index="firstPalletIndex"
+                        :pallet-index="palletIndex"
                         @getPalletColor="getPalletColorMethod"
                     ></pallet-area>
                 </div>
