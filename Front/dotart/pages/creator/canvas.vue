@@ -75,21 +75,35 @@ export default defineComponent({
     setup() {
         const router = useRouter();
 
-        /* TODO: 回転、逆回転が以下のエラーで動いていないので修正する
-         * Write operation failed: computed value is readonly.
-         */
         const getRange = computed((): number => {
             return CanvasDataModule.canvasRange;
         });
+
         const getMagnification = computed((): number => {
             return CanvasDataModule.canvasMagnification;
         });
+
         const getColorPallet = computed((): string[] => {
             return CanvasDataModule.palletColor;
         });
+
         const getCanvasIndexData = computed((): number[] => {
             return CanvasDataModule.canvasIndexData;
         });
+
+        /* TODO: canvasColorState.getCanvasIndexDataに代入処理を行う場合はこちらも検討する
+         *  こちらはcomputedをgetter/setterとして利用できる記法
+         *  ただし呼び出す側の型もWritableComputedRefに代わっていくので注意
+         */
+        // const _canvasIndexData = reactive({
+        //     value: CanvasDataModule.canvasIndexData,
+        // });
+        // const getCanvasIndexData = computed({
+        //     get: () => _canvasIndexData.value,
+        //     set: () => {
+        //         _canvasIndexData.value = CanvasDataModule.canvasIndexData;
+        //     },
+        // });
 
         const pointState = reactive<{ pointed: Point; beforePointed: Point }>({
             pointed: { X: 0, Y: 0 }, // 現在のグリッド座標
@@ -609,8 +623,8 @@ export default defineComponent({
                     x * canvasSettingState.canvasRange;
                 resultIndexData[xy] = canvasColorState.canvasIndexData[i];
             }
-            canvasColorState.canvasIndexData = resultIndexData.slice();
-            redraw(canvasColorState.canvasIndexData);
+            // canvasColorState.canvasIndexData = resultIndexData.slice();
+            redraw(resultIndexData.slice());
             afterDraw();
         };
 
@@ -626,8 +640,8 @@ export default defineComponent({
                         canvasSettingState.canvasRange;
                 resultIndexData[xy] = canvasColorState.canvasIndexData[i];
             }
-            canvasColorState.canvasIndexData = resultIndexData.slice();
-            redraw(canvasColorState.canvasIndexData);
+            // canvasColorState.canvasIndexData = resultIndexData.slice();
+            redraw(resultIndexData.slice());
             afterDraw();
         };
 
