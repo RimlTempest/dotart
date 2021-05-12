@@ -26,7 +26,7 @@
             </v-container>
         </v-content>
         <!-- footer -->
-        <v-footer :fixed="fixed" color="primary" app>
+        <v-footer v-if="isCreator" :fixed="fixed" color="primary" app>
             <v-spacer />
             <span>{{ title }}</span>
             <span>{{ copyRightYear }}</span>
@@ -50,9 +50,17 @@ export default class DefaultPage extends Vue {
     fixed: boolean = false;
     title: string | undefined = process.env.APP_NAME;
 
+    get isCreator() {
+        const path = this.$route.path;
+        if (path === '/creator/canvas') {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     homerouting(): void {
         this.$router.push('/');
-        // console.log(this.$store.state)
     }
 
     // computed
