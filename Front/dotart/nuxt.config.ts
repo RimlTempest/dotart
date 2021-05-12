@@ -1,9 +1,10 @@
 import { Configuration } from '@nuxt/types';
 import colors from 'vuetify/es5/util/colors';
+import { Auth } from 'nuxtjs__auth';
 
 declare module 'vue/types/vue' {
     interface Vue {
-        $auth: any;
+        $auth: Auth;
     }
 }
 
