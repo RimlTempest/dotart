@@ -1,5 +1,5 @@
 <template>
-    <v-layout column justify-center align-center>
+    <v-layout column justify-center align-center class="notDoubleTop">
         <v-flex xs12 sm12 md12 style="text-align: center">
             <v-container fluid>
                 <v-row dense>
@@ -723,6 +723,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.notDoubleTop {
+    touch-action: manipulation;
+}
 .DrowCanvas {
     position: relative;
     // top: -15px;
