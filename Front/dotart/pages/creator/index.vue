@@ -2,7 +2,7 @@
     <v-layout column justify-center align-center>
         <v-flex xs12 sm8 md6>
             <v-container fluid>
-                <v-row dense>
+                <v-row dense class="card_container">
                     <v-col cols="12">
                         <v-card light hover max-width="1000" class="card">
                             <v-form ref="form" lazy-validation>
@@ -238,6 +238,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.card_container {
+    text-align: -webkit-center;
+}
 .card {
     justify-content: center;
     padding-left: 20px;
