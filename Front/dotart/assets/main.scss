@@ -2,3 +2,7 @@
     font-family: 'Dot Font';
     src: url('../assets/fonts/PixelMplus12-Bold.ttf') format("truetype");
 }
+
+html {
+    touch-action: manipulation;
+}
