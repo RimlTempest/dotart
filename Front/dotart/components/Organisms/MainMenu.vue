@@ -63,13 +63,10 @@ export default class MainMenu extends Vue {
     drawerFlg: boolean = false;
     scrolled: number = 0;
 
-    public created(): void {
-        return;
-    }
+    public created(): void {}
 
     public mounted(): void {
         this.scrollArea = document.querySelector('#beforeScrollArea');
-        console.log('this.scrollArea');
         this.scrollArea!.addEventListener('scroll', this.onScroll);
     }
 
@@ -77,9 +74,7 @@ export default class MainMenu extends Vue {
         this.drawerFlg = !this.drawerFlg;
     }
 
-    public onScroll(e: any): void {
-        console.log(e);
-    }
+    public onScroll(_e: any): void {}
 
     public getScrollArea(): void {
         if (!this.drawerFlg) {
@@ -87,13 +82,11 @@ export default class MainMenu extends Vue {
         } else {
             this.scrollArea = document.querySelector('#afterScrollArea');
         }
-        console.log(this.scrollArea);
     }
 
     public getPalletColorMethod(newColor: string, newIndex: number): void {
         this.selectingColor = newColor;
         this.palletIndex = newIndex;
-        console.log(this.palletIndex);
         this.getPalletColor(this.selectingColor, this.palletIndex);
     }
 }

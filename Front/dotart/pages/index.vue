@@ -69,7 +69,8 @@ export default defineComponent({
                     title: 'お知らせ',
                     subtitle: 'version 0.0.5β',
                     link: '/',
-                    infomation: '現在テスト環境です。\nバグ等あるかもしれませんがご了承ください。',
+                    infomation:
+                        '現在テスト環境です。\nバグ等あるかもしれませんがご了承ください。',
                     flex: 12,
                 },
             ],
