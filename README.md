@@ -1,5 +1,9 @@
 # ドット絵クリエイター＆投稿アプリ
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/c1e128fc-c565-4b91-a199-7504b4cdca4a/deploy-status)](https://app.netlify.com/sites/peaceful-agnesi-a26f39/deploys)
+
+[DotArt beta](https://dotart.riml.work)
+
 ## Project Leader
 
 ### Riml
