@@ -92,10 +92,10 @@ const nuxtConfig: Configuration = {
             },
         ],
     },
-    workbox: {
-        swDest: '/sw.js',
-        dev: true,
-    },
+    // workbox: {
+    //     swDest: '/sw.js',
+    //     dev: true,
+    // },
     // workbox: {
     //   dev: true // 開発時にもPWAを有効化
     // },
