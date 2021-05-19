@@ -74,7 +74,7 @@ export default defineComponent({
     },
     setup() {
         const router = useRouter();
-        const session = JSON.parse(sessionStorage.getItem('dotArtStore')); //セッションストレージから設定項目を取得
+        const session = JSON.parse(sessionStorage!.getItem('dotArtStore')); //セッションストレージから設定項目を取得
         const getRange = computed((): number => {
             return session.canvasData.canvasRange;
         });
@@ -647,11 +647,18 @@ export default defineComponent({
 
         // 画像保存ページへの遷移
         const imageSave = (): void => {
-            // canvasのインデックスデータとパレットデータをストアへ
+            // canvasのインデックスデータとパレットデータ、ストアの諸データをストアへ入れなおす
+            // Rangeを入れるとIndexDataを初期化してしまうのでRangeの後にIndexDataを入れること
+            CanvasDataModule.setPalletColor(palletState.colorPallet);
+            CanvasDataModule.setCanvasName(session.canvasData.canvasName);
+            CanvasDataModule.setCanvasRange(session.canvasData.canvasRange);
             CanvasDataModule.setCanvasIndexData(
                 canvasColorState.canvasIndexData
             );
-            CanvasDataModule.setPalletColor(palletState.colorPallet);
+            CanvasDataModule.setCanvasMagnification(
+                session.canvasData.canvasMagnification
+            );
+            CanvasDataModule.setPalletName(session.canvasData.palletName);
             router.push('/creator/save');
         };
 
