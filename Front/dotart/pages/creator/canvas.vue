@@ -74,21 +74,21 @@ export default defineComponent({
     },
     setup() {
         const router = useRouter();
-
+        const session = JSON.parse(sessionStorage.getItem('dotArtStore')); //セッションストレージから設定項目を取得
         const getRange = computed((): number => {
-            return CanvasDataModule.canvasRange;
+            return session.canvasData.canvasRange;
         });
 
         const getMagnification = computed((): number => {
-            return CanvasDataModule.canvasMagnification;
+            return session.canvasData.canvasMagnification;
         });
 
         const getColorPallet = computed((): string[] => {
-            return CanvasDataModule.palletColor;
+            return session.canvasData.palletColor;
         });
 
         const getCanvasIndexData = computed((): number[] => {
-            return CanvasDataModule.canvasIndexData;
+            return session.canvasData.canvasIndexData;
         });
 
         /* TODO: canvasColorState.getCanvasIndexDataに代入処理を行う場合はこちらも検討する
