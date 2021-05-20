@@ -84,7 +84,7 @@ type SizeListItems = {
 export default defineComponent({
     name: 'SavePage',
     setup() {
-        const session = JSON.parse(sessionStorage!.getItem('dotArtStore')); //セッションストレージから設定項目を取得
+        const session = JSON.parse(sessionStorage.getItem('dotArtStore')!); //セッションストレージから設定項目を取得
         const getCanvasName = computed((): string => {
             return session.canvasData.canvasName;
         });
