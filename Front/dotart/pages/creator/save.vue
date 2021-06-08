@@ -68,7 +68,6 @@ import {
     ComputedRef,
     onMounted,
 } from '@nuxtjs/composition-api';
-import { CanvasDataModule } from '@/store/modules/canvasData';
 
 type SelectedSize = {
     text: string;
@@ -83,20 +82,21 @@ type SizeListItems = {
 export default defineComponent({
     name: 'SavePage',
     setup() {
+        const session = JSON.parse(sessionStorage.getItem('dotArtStore')!);
         const getCanvasName = computed((): string => {
-            return CanvasDataModule.canvasName;
+            return session.canvasData.canvasName;
         });
         const getRange = computed((): number => {
-            return CanvasDataModule.canvasRange;
+            return session.canvasData.canvasRange;
         });
         const getMagnification = computed((): number => {
-            return CanvasDataModule.canvasMagnification;
+            return session.canvasData.canvasMagnification;
         });
         const getColorPallet = computed((): string[] => {
-            return CanvasDataModule.palletColor;
+            return session.canvasData.palletColor;
         });
         const getCanvasIndexData = computed((): number[] => {
-            return CanvasDataModule.canvasIndexData;
+            return session.canvasData.canvasIndexData;
         });
         const canvasState = reactive<{
             canvasName: ComputedRef<string>;

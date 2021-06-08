@@ -107,20 +107,23 @@ export default defineComponent({
     setup() {
         const router = useRouter();
 
+        // セッションストレージから設定項目を取得
+        const session = JSON.parse(sessionStorage.getItem('dotArtStore')!);
+
         const getRange = computed((): number => {
-            return CanvasDataModule.canvasRange;
+            return session.canvasData.canvasRange;
         });
 
         const getMagnification = computed((): number => {
-            return CanvasDataModule.canvasMagnification;
+            return session.canvasData.canvasMagnification;
         });
 
         const getColorPallet = computed((): string[] => {
-            return CanvasDataModule.palletColor;
+            return session.canvasData.palletColor;
         });
 
         const getCanvasIndexData = computed((): number[] => {
-            return CanvasDataModule.canvasIndexData;
+            return session.canvasData.canvasIndexData;
         });
 
         /* TODO: canvasColorState.getCanvasIndexDataに代入処理を行う場合はこちらも検討する
@@ -679,11 +682,18 @@ export default defineComponent({
 
         // 画像保存ページへの遷移
         const imageSave = (): void => {
-            // canvasのインデックスデータとパレットデータをストアへ
+            // canvasのインデックスデータとパレットデータ、ストアの諸データをストアへ入れなおす
+            // Rangeを入れるとIndexDataを初期化してしまうのでRangeの後にIndexDataを入れること
+            CanvasDataModule.setPalletColor(palletState.colorPallet);
+            CanvasDataModule.setCanvasName(session.canvasData.canvasName);
+            CanvasDataModule.setCanvasRange(session.canvasData.canvasRange);
             CanvasDataModule.setCanvasIndexData(
                 canvasColorState.canvasIndexData
             );
-            CanvasDataModule.setPalletColor(palletState.colorPallet);
+            CanvasDataModule.setCanvasMagnification(
+                session.canvasData.canvasMagnification
+            );
+            CanvasDataModule.setPalletName(session.canvasData.palletName);
             router.push('/creator/save');
         };
 
