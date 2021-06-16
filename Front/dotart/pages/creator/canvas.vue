@@ -202,8 +202,17 @@ export default defineComponent({
         });
 
         //タッチイベントの取得(スクロール規制用)
-        const handleTouchMove = (e: UIEvent): void => {
-            e.preventDefault();
+        const handleTouchMove = (e: any): void => {
+            if (
+                e.target.className !== 'scroll' &&
+                e.target.className !== 'layout justify-center' &&
+                e.target.className !== 'pallet'
+            ) {
+                e.preventDefault();
+            } else {
+                e.stopPropagation();
+                console.log(e.target.className);
+            }
         };
 
         onMounted((): void => {
@@ -234,7 +243,7 @@ export default defineComponent({
             drawGrid();
             afterDraw();
 
-            // スマホでのタッチ操作でのスクロール禁止
+            //スマホでのタッチ操作でのスクロール禁止
             document.addEventListener('touchmove', handleTouchMove, {
                 passive: false,
             });
@@ -266,13 +275,16 @@ export default defineComponent({
         // クリック、タッチした位置のキャンパスにおけるXY座標を返す
         // 引数はマウスの座標
         const getMousePoint = (wholeCoor: Point): Point => {
+            console.log(window.pageXOffset);
             canvasSettingState.rect = canvasState.canvas!.getBoundingClientRect();
             const coor: Point = {
                 X:
-                    (wholeCoor.X - canvasSettingState.rect.left) /
+                    (wholeCoor.X -
+                        (canvasSettingState.rect.x + window.pageXOffset)) /
                     canvasSettingState.canvasSizeMagnification,
                 Y:
-                    (wholeCoor.Y - canvasSettingState.rect.top) /
+                    (wholeCoor.Y -
+                        (canvasSettingState.rect.y + window.pageYOffset)) /
                     canvasSettingState.canvasSizeMagnification,
             };
             return coor;
@@ -337,7 +349,7 @@ export default defineComponent({
                 return;
             }
             // キャンバス内におけるXY座標を取得
-            const coor: Point = getMousePoint({ X: e.clientX, Y: e.clientY });
+            const coor: Point = getMousePoint({ X: e.pageX, Y: e.pageY });
             // ドットのグリッド座標を更新
             getCanvasCell(coor);
             // 描画
