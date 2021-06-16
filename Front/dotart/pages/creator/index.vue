@@ -213,7 +213,12 @@ export default defineComponent({
         });
 
         const startDraw = (): void => {
-            // お絵描きページへ遷移
+            //セッションストレージ全消し
+            //一部消すようにしたかったら↓使ってね
+            //sessionStorage.removeItem("")
+            sessionStorage.clear();
+            //セッションストレージに各種項目を設定
+            CanvasDataModule.setReset();
             CanvasDataModule.setCanvasName(palletState.canvasName);
             CanvasDataModule.setCanvasRange(palletState.selectedSize.range);
             CanvasDataModule.setCanvasMagnification(
@@ -221,6 +226,7 @@ export default defineComponent({
             );
             CanvasDataModule.setPalletName(palletState.selectedPallet.text);
             CanvasDataModule.setPalletColor(palletState.selectedPallet.pallet);
+            // お絵描きページへ遷移
             router.push('/creator/canvas');
             // this.$router.push('/creator/canvas');
         };
