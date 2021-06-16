@@ -14,29 +14,40 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'nuxt-property-decorator';
+import { defineComponent, PropType } from '@nuxtjs/composition-api';
 // import { canvasDataModule } from '../../store/modules/canvasData';
 import Pallet from '@/components/Atomics/Pallet.vue';
 
-@Component({
+export default defineComponent({
+    name: 'PalletArea',
     components: {
         Pallet,
     },
-})
-export default class PalletArea extends Vue {
-    @Prop({ type: Array })
-    colorPallet!: string[]; // ページから渡されるパレットの色の配列
-
-    @Prop({ type: Number })
-    firstPalletIndex!: number; // 最初に選択しているパレットの位置
-
-    @Prop({ type: Number })
-    palletIndex!: number; // 最初に選択しているパレットの位置
-
-    getPalletColor(newColor: string, newIndex: number): void {
-        this.$emit('getPalletColor', newColor, newIndex);
-    }
-}
+    props: {
+        // ページから渡されるパレットの色の配列
+        colorPallet: {
+            type: Array as PropType<string[]>,
+            required: true,
+        },
+        // 最初に選択しているパレットの位置
+        firstPalletIndex: {
+            type: Number,
+            required: true,
+        },
+        palletIndex: {
+            type: Number,
+            requied: true,
+        },
+    },
+    setup(_props, context) {
+        const getPalletColor = (newColor: string, newIndex: number) => {
+            context.emit('getPalletColor', newColor, newIndex);
+        };
+        return {
+            getPalletColor,
+        };
+    },
+});
 </script>
 <style lang="scss" scoped>
 .palletarea {

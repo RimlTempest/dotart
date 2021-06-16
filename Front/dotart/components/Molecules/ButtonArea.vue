@@ -7,12 +7,12 @@
         </v-col>
         <v-col cols="2">
             <div>
-                <undoButton :click-event="undo" />
+                <undo-button :click-event="undo" />
             </div>
         </v-col>
         <v-col cols="2">
             <div>
-                <redoButton :click-event="redo" />
+                <redo-button :click-event="redo" />
             </div>
         </v-col>
         <v-col cols="2">
@@ -32,48 +32,58 @@
         </v-col>
         <v-col cols="2">
             <div>
-                <button @click="anticlockRotate">反時計回り</button>
+                <button @click="antiClockRotate">反時計回り</button>
             </div>
         </v-col>
     </v-row>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
-import undoButton from '@/components/Atomics/undoButton.vue';
-import redoButton from '@/components/Atomics/redoButton.vue';
+import { defineComponent } from '@nuxtjs/composition-api';
+import UndoButton from '@/components/Atomics/UndoButton.vue';
+import RedoButton from '@/components/Atomics/RedoButton.vue';
 
-@Component({
+export default defineComponent({
+    name: 'ButtonArea',
     middleware: 'auth',
     components: {
-        undoButton,
-        redoButton,
+        UndoButton,
+        RedoButton,
     },
-})
-export default class ButtonArea extends Vue {
-    @Prop({ type: String })
-    penMode!: string; // 最初に選択しているパレットの位置
-
-    @Prop({ type: Function })
-    modeChange!: Function;
-
-    @Prop({ type: Function })
-    undo!: Function;
-
-    @Prop({ type: Function })
-    redo!: Function;
-
-    @Prop({ type: Function })
-    drawGrid!: Function;
-
-    @Prop({ type: Function })
-    Save!: Function;
-
-    @Prop({ type: Function })
-    clockRotate!: Function;
-
-    @Prop({ type: Function })
-    anticlockRotate!: Function;
-}
+    props: {
+        penMode: {
+            type: String,
+            required: true,
+        },
+        modeChange: {
+            type: Function,
+            required: true,
+        },
+        undo: {
+            type: Function,
+            required: true,
+        },
+        redo: {
+            type: Function,
+            required: true,
+        },
+        drawGrid: {
+            type: Function,
+            required: true,
+        },
+        save: {
+            type: Function,
+            required: true,
+        },
+        clockRotate: {
+            type: Function,
+            required: true,
+        },
+        antiClockRotate: {
+            type: Function,
+            required: true,
+        },
+    },
+});
 </script>
 <style></style>

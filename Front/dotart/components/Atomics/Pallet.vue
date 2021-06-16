@@ -13,54 +13,79 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'nuxt-property-decorator';
-// import { canvasDataModule } from '../../store/modules/canvasData';
-@Component
-export default class Pallet extends Vue {
-    @Prop({ type: String })
-    color!: string;
+import {
+    defineComponent,
+    reactive,
+    onMounted,
+    watch,
+} from '@nuxtjs/composition-api';
 
-    @Prop({ type: Number })
-    index!: number;
+export default defineComponent({
+    name: 'Pallet',
+    props: {
+        color: {
+            type: String,
+            required: true,
+        },
+        index: {
+            type: Number,
+            default: 0,
+            required: true,
+        },
+        selectedIndex: {
+            type: Number,
+            default: 0,
+            required: true,
+        },
+    },
+    setup({ color, index, selectedIndex }, context) {
+        const styleState = reactive<{
+            margin: string;
+            width: string;
+            height: string;
+            border: string;
+        }>({
+            margin: '2px',
+            width: '23px',
+            height: '23px',
+            border: '2px solid rgb(87, 56, 84)',
+        });
 
-    @Prop({ type: Number })
-    selectedIndex!: number;
+        onMounted(() => {
+            if (selectedIndex === index) {
+                styleState.margin = '1px';
+                styleState.width = '25px';
+                styleState.height = '25px';
+                styleState.border = '3px solid rgb(235, 146, 227)';
+            }
+        });
 
-    margin: string = '2px';
-    width: string = '23px';
-    height: string = '23px';
-    border: string = '2px solid rgb(87, 56, 84)';
+        watch(
+            () => selectedIndex,
+            (newIndex: number, _oldIndex: number) => {
+                if (newIndex === index) {
+                    styleState.margin = '1px';
+                    styleState.width = '25px';
+                    styleState.height = '25px';
+                    styleState.border = '3px solid rgb(235, 146, 227)';
+                } else {
+                    styleState.margin = '2px';
+                    styleState.width = '23px';
+                    styleState.height = '23px';
+                    styleState.border = '2px solid rgb(87, 56, 84)';
+                }
+            }
+        );
 
-    selectedflg: boolean = false;
+        const getColor = (_e: any): void => {
+            context.emit('getColor', color, index);
+        };
 
-    public mounted(): void {
-        if (this.selectedIndex === this.index) {
-            this.margin = '1px';
-            this.width = '25px';
-            this.height = '25px';
-            this.border = '3px solid rgb(235, 146, 227)';
-        }
-    }
-
-    @Watch('selectedIndex')
-    public checkSelected(newIndex: number, _oldIndex: number) {
-        if (newIndex === this.index) {
-            this.margin = '1px';
-            this.width = '25px';
-            this.height = '25px';
-            this.border = '3px solid rgb(235, 146, 227)';
-        } else {
-            this.margin = '2px';
-            this.width = '23px';
-            this.height = '23px';
-            this.border = '2px solid rgb(87, 56, 84)';
-        }
-    }
-
-    public getColor(_e: any): void {
-        this.$emit('getColor', this.color, this.index);
-    }
-}
+        return {
+            getColor,
+        };
+    },
+});
 </script>
 <style lang="scss" scoped>
 .pallet {
