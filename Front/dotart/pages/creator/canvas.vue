@@ -34,16 +34,32 @@
                     :undo="undo"
                     :redo="redo"
                     :draw-grid="drawGrid"
-                    :save="imageSave"
+                    :Save="imageSave"
                     :clock-rotate="clockRotate"
                     :anticlock-rotate="antiClockRotate"
                 ></button-area>
 
-                <main-menu
+                <div
+                    class="selected"
+                    :style="{
+                        background: selectingPalletState.selectingColor,
+                    }"
+                    @mousedown="pallettTranslate"
+                ></div>
+
+                <pallet-menu
                     :color-pallet="palletState.colorPallet"
                     :first-pallet-index="palletState.palletIndex"
                     :get-pallet-color="getPalletColor"
-                ></main-menu>
+                    :pallet-drawer-flag="FraggerState.palletDrawerFlag"
+                    :translate="pallettTranslate"
+                ></pallet-menu>
+
+                <!-- <main-menu
+                    :color-pallet="palletState.colorPallet"
+                    :first-pallet-index="palletState.palletIndex"
+                    :get-pallet-color="getPalletColor"
+                ></main-menu> -->
             </v-container>
         </v-flex>
     </v-layout>
@@ -65,12 +81,14 @@ import { Stack } from '@/types/Canvas/StackType';
 import { CanvasDataModule } from '@/store/modules/canvasData';
 import ButtonArea from '@/components/Molecules/ButtonArea.vue';
 import MainMenu from '@/components/Organisms/MainMenu.vue';
+import PalletMenu from '@/components/Organisms/PalletMenu.vue';
 
 export default defineComponent({
     name: 'canvasPage',
     components: {
         ButtonArea,
         MainMenu,
+        PalletMenu,
     },
     setup() {
         const router = useRouter();
@@ -175,12 +193,15 @@ export default defineComponent({
             isDrag: boolean;
             isGrid: boolean;
             pageActive: boolean;
+            palletDrawerFlag: boolean;
         }>({
             isDrag: false, // ドラッグしているかのフラグ
             isGrid: false, // グリッドの表示の有無のフラグ
             pageActive: false, // 画面が読み込まれたかどうかのフラグ
+            palletDrawerFlag: false,
         });
 
+        //タッチイベントの取得(スクロール規制用)
         const handleTouchMove = (e: UIEvent): void => {
             e.preventDefault();
         };
@@ -362,7 +383,7 @@ export default defineComponent({
                     drawLine(pointState.beforePointed, pointState.pointed);
                     break;
                 case 'bucket':
-                    // FIXME: バケツ中にドラッグしても何も起きない
+                    // TODO: バケツ中にドラッグしても何も起きない
                     break;
             }
         };
@@ -645,6 +666,14 @@ export default defineComponent({
             afterDraw();
         };
 
+        // パレットメニューの開閉
+        const pallettTranslate = (): void => {
+            if (!FraggerState.pageActive) {
+                return;
+            }
+            FraggerState.palletDrawerFlag = !FraggerState.palletDrawerFlag;
+        };
+
         // 画像保存ページへの遷移
         const imageSave = (): void => {
             // canvasのインデックスデータとパレットデータ、ストアの諸データをストアへ入れなおす
@@ -690,6 +719,7 @@ export default defineComponent({
             redraw,
             clockRotate,
             antiClockRotate,
+            pallettTranslate,
             // End
             imageSave,
         };
@@ -707,5 +737,11 @@ export default defineComponent({
         top: 0px;
         left: 0px;
     }
+}
+.selected {
+    margin: 2px;
+    width: 23px;
+    height: 23px;
+    border: 2px solid rgb(87, 56, 84);
 }
 </style>
