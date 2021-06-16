@@ -5,9 +5,9 @@
                 <div id="beforeScrollArea" class="scroll" @scroll="onScroll">
                     <pallet-area
                         class="palletArea"
-                        :colorPallet="colorPallet"
-                        :firstPalletIndex="firstPalletIndex"
-                        :palletIndex="palletIndex"
+                        :color-pallet="colorPallet"
+                        :first-pallet-index="firstPalletIndex"
+                        :pallet-index="palletIndex"
                         @getPalletColor="getPalletColorMethod"
                     ></pallet-area>
                 </div>
@@ -37,6 +37,7 @@
 </template>
 
 <script lang="ts">
+// TODO: 必要がなくなるものなのでcompositionApiに修正しない
 import { Vue, Component, Prop } from 'nuxt-property-decorator';
 import PalletArea from '@/components/Molecules/PalletArea.vue';
 
@@ -63,9 +64,7 @@ export default class MainMenu extends Vue {
     drawerFlg: boolean = false;
     scrolled: number = 0;
 
-    public created(): void {
-        return;
-    }
+    public created(): void {}
 
     public mounted(): void {
         this.scrollArea = document.querySelector('#beforeScrollArea');
