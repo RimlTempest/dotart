@@ -40,19 +40,20 @@
                 ></button-area>
 
                 <div
-                    class="selected"
+                    class="palletitem selected"
                     :style="{
                         background: selectingPalletState.selectingColor,
                     }"
-                    @mousedown="pallettTranslate"
+                    @mousedown="palletTranslate"
                 ></div>
 
                 <pallet-menu
+                    class="palletitem"
                     :color-pallet="palletState.colorPallet"
                     :first-pallet-index="palletState.palletIndex"
                     :get-pallet-color="getPalletColor"
                     :pallet-drawer-flag="FraggerState.palletDrawerFlag"
-                    :translate="pallettTranslate"
+                    :translate="palletClose"
                 ></pallet-menu>
 
                 <!-- <main-menu
@@ -215,6 +216,14 @@ export default defineComponent({
             }
         };
 
+        //タッチイベントの取得(スクロール規制用)
+        const palletCloseCheck = (e: any): void => {
+            console.log(e.target.classList);
+            if (!e.target.classList.contains('palletitem')) {
+                FraggerState.palletDrawerFlag = false;
+            }
+        };
+
         onMounted((): void => {
             // ページが立ち上がる時の処理
             // canvasのコンテキスト取得(絵を描く領域)
@@ -247,6 +256,7 @@ export default defineComponent({
             document.addEventListener('touchmove', handleTouchMove, {
                 passive: false,
             });
+            document.addEventListener('mousedown', palletCloseCheck);
             FraggerState.pageActive = true;
         });
 
@@ -255,6 +265,7 @@ export default defineComponent({
             // コンポーネントが破棄される直前の処理
             // スマホでのタッチ操作でのスクロール禁止を解除
             document.removeEventListener('touchmove', handleTouchMove);
+            document.removeEventListener('mousedown', palletCloseCheck);
         });
 
         // ペンのモードチェンジ
@@ -679,11 +690,19 @@ export default defineComponent({
         };
 
         // パレットメニューの開閉
-        const pallettTranslate = (): void => {
+        const palletTranslate = (): void => {
             if (!FraggerState.pageActive) {
                 return;
             }
             FraggerState.palletDrawerFlag = !FraggerState.palletDrawerFlag;
+        };
+
+        // パレットメニュー閉じる
+        const palletClose = (): void => {
+            if (!FraggerState.pageActive) {
+                return;
+            }
+            FraggerState.palletDrawerFlag = false;
         };
 
         // 画像保存ページへの遷移
@@ -731,7 +750,8 @@ export default defineComponent({
             redraw,
             clockRotate,
             antiClockRotate,
-            pallettTranslate,
+            palletTranslate,
+            palletClose,
             // End
             imageSave,
         };
@@ -755,5 +775,8 @@ export default defineComponent({
     width: 23px;
     height: 23px;
     border: 2px solid rgb(87, 56, 84);
+}
+body {
+    overflow: clip;
 }
 </style>

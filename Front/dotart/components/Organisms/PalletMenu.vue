@@ -2,10 +2,10 @@
     <transition name="palletMenu">
         <div v-show="palletDrawerFlag" class="drawerMenuArea__Wrapper">
             <!-- ここにメニューの内容を書いていく -->
-            <div class="menuContents">
-                <div class="scroll">
+            <div class="menuContents palletitem">
+                <div class="scroll palletitem">
                     <pallet-area
-                        class="palletArea"
+                        class="palletArea palletitem"
                         :color-pallet="colorPallet"
                         :first-pallet-index="firstPalletIndex"
                         :palletIndex="palletIndex"
@@ -63,7 +63,7 @@ export default class PalletMenu extends Vue {
 </script>
 <style lang="scss" scoped>
 $defaultHeight: 0px; //格納状態でのメニューのheight
-$movedHeight: 50px; //展開状態でのメニューのheight
+$movedHeight: 100px; //展開状態でのメニューのheight
 $movePercentage: 100% * (1 - $defaultHeight/$movedHeight); //transformの割合
 //@debug $movePercentage;
 .drawerdefault {
@@ -72,7 +72,7 @@ $movePercentage: 100% * (1 - $defaultHeight/$movedHeight); //transformの割合
     justify-content: space-between;
 }
 .menuContents {
-    display: -webkit-box; //これ
+    display: -webkit-box;
     display: flex;
     margin-left: 5px;
     margin-right: 5px;
@@ -81,6 +81,7 @@ $movePercentage: 100% * (1 - $defaultHeight/$movedHeight); //transformの割合
     vertical-align: top;
 }
 .scroll {
+    margin-top: 5px;
     overflow-x: scroll;
     max-width: 90%;
 }
@@ -115,6 +116,6 @@ $movePercentage: 100% * (1 - $defaultHeight/$movedHeight); //transformの割合
     width: 100%;
     max-width: 100%;
     height: $movedHeight;
-    background-color: rgb(114, 11, 92);
+    background-color: rgb(153, 29, 126);
 }
 </style>
