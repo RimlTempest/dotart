@@ -27,6 +27,7 @@
     "@nuxt/typescript-build": "^1.0.1",
     "@nuxtjs/eslint-config-typescript": "^2.0.0",
     "@nuxtjs/eslint-module": "^1.0.0",
+    "@nuxtjs/google-analytics": "^2.4.0",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "@nuxtjs/vuetify": "^1.11.2",
     "@types/nuxtjs__auth": "^4.8.7",

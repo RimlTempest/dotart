@@ -63,7 +63,14 @@ const nuxtConfig: Configuration = {
         '@nuxtjs/vuetify',
         '@nuxtjs/pwa',
         '@nuxtjs/composition-api/module',
+        [
+            '@nuxtjs/google-analytics',
+            {
+                id: 'UA-200790484-2',
+            },
+        ],
     ],
+
     /*
      ** Nuxt.js modules
      */
