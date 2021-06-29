@@ -102,7 +102,6 @@ export default defineComponent({
             canvasName: ComputedRef<string>;
             canvasRange: ComputedRef<number>;
             canvasMagnification: ComputedRef<number>;
-            saveCanvasMagnification: ComputedRef<number>;
             colorPallet: ComputedRef<string[]>;
             canvasIndexData: ComputedRef<number[]>;
             previewCanvas: HTMLCanvasElement | null;
@@ -113,7 +112,6 @@ export default defineComponent({
             canvasName: getCanvasName, // キャンバスの名前
             canvasRange: getRange, // ドット絵のサイズ
             canvasMagnification: getMagnification, // 元の倍率
-            saveCanvasMagnification: getMagnification, // 保存時の倍率
             colorPallet: getColorPallet,
             canvasIndexData: getCanvasIndexData,
             previewCanvas: null, // イラストを表示するキャンバス
@@ -226,16 +224,16 @@ export default defineComponent({
 
         // 選んだ倍率からドット絵を描画し、画像として保存する
         const saveImage = (): void => {
-            canvasState.saveCanvasMagnification =
-                setCanvasState.selectedSize.magnification;
             canvasState.saveCanvas!.width =
-                canvasState.canvasRange * canvasState.saveCanvasMagnification;
+                canvasState.canvasRange *
+                setCanvasState.selectedSize.magnification;
             canvasState.saveCanvas!.height =
-                canvasState.canvasRange * canvasState.saveCanvasMagnification;
+                canvasState.canvasRange *
+                setCanvasState.selectedSize.magnification;
             // 画像を拡大するのではなく倍率を変えて再描画してるので画質の劣化はないと思う
             draw(
                 canvasState.canvasRange,
-                canvasState.saveCanvasMagnification,
+                setCanvasState.selectedSize.magnification,
                 canvasState.saveCanvasCtx
             );
             // if (this.saveCanvas.msToBlob) {
