@@ -34,16 +34,33 @@
                     :undo="undo"
                     :redo="redo"
                     :draw-grid="drawGrid"
-                    :save="imageSave"
+                    :Save="imageSave"
                     :clock-rotate="clockRotate"
                     :anticlock-rotate="antiClockRotate"
                 ></button-area>
 
-                <main-menu
+                <div
+                    class="palletitem selected"
+                    :style="{
+                        background: selectingPalletState.selectingColor,
+                    }"
+                    @mousedown="palletTranslate"
+                ></div>
+
+                <pallet-menu
+                    class="palletitem"
                     :color-pallet="palletState.colorPallet"
                     :first-pallet-index="palletState.palletIndex"
                     :get-pallet-color="getPalletColor"
-                ></main-menu>
+                    :pallet-drawer-flag="FraggerState.palletDrawerFlag"
+                    :translate="palletClose"
+                ></pallet-menu>
+
+                <!-- <main-menu
+                    :color-pallet="palletState.colorPallet"
+                    :first-pallet-index="palletState.palletIndex"
+                    :get-pallet-color="getPalletColor"
+                ></main-menu> -->
             </v-container>
         </v-flex>
     </v-layout>
@@ -65,12 +82,14 @@ import { Stack } from '@/types/Canvas/StackType';
 import { CanvasDataModule } from '@/store/modules/canvasData';
 import ButtonArea from '@/components/Molecules/ButtonArea.vue';
 import MainMenu from '@/components/Organisms/MainMenu.vue';
+import PalletMenu from '@/components/Organisms/PalletMenu.vue';
 
 export default defineComponent({
     name: 'canvasPage',
     components: {
         ButtonArea,
         MainMenu,
+        PalletMenu,
     },
     setup() {
         const router = useRouter();
@@ -175,14 +194,34 @@ export default defineComponent({
             isDrag: boolean;
             isGrid: boolean;
             pageActive: boolean;
+            palletDrawerFlag: boolean;
         }>({
             isDrag: false, // ドラッグしているかのフラグ
             isGrid: false, // グリッドの表示の有無のフラグ
             pageActive: false, // 画面が読み込まれたかどうかのフラグ
+            palletDrawerFlag: false,
         });
 
-        const handleTouchMove = (e: UIEvent): void => {
-            e.preventDefault();
+        //タッチイベントの取得(スクロール規制用)
+        const handleTouchMove = (e: any): void => {
+            if (
+                e.target.className !== 'scroll' &&
+                e.target.className !== 'layout justify-center' &&
+                e.target.className !== 'pallet'
+            ) {
+                e.preventDefault();
+            } else {
+                e.stopPropagation();
+                console.log(e.target.className);
+            }
+        };
+
+        //タッチイベントの取得(スクロール規制用)
+        const palletCloseCheck = (e: any): void => {
+            console.log(e.target.classList);
+            if (!e.target.classList.contains('palletitem')) {
+                FraggerState.palletDrawerFlag = false;
+            }
         };
 
         onMounted((): void => {
@@ -213,10 +252,11 @@ export default defineComponent({
             drawGrid();
             afterDraw();
 
-            // スマホでのタッチ操作でのスクロール禁止
+            //スマホでのタッチ操作でのスクロール禁止
             document.addEventListener('touchmove', handleTouchMove, {
                 passive: false,
             });
+            document.addEventListener('mousedown', palletCloseCheck);
             FraggerState.pageActive = true;
         });
 
@@ -225,6 +265,7 @@ export default defineComponent({
             // コンポーネントが破棄される直前の処理
             // スマホでのタッチ操作でのスクロール禁止を解除
             document.removeEventListener('touchmove', handleTouchMove);
+            document.removeEventListener('mousedown', palletCloseCheck);
         });
 
         // ペンのモードチェンジ
@@ -245,13 +286,16 @@ export default defineComponent({
         // クリック、タッチした位置のキャンパスにおけるXY座標を返す
         // 引数はマウスの座標
         const getMousePoint = (wholeCoor: Point): Point => {
+            console.log(window.pageXOffset);
             canvasSettingState.rect = canvasState.canvas!.getBoundingClientRect();
             const coor: Point = {
                 X:
-                    (wholeCoor.X - canvasSettingState.rect.left) /
+                    (wholeCoor.X -
+                        (canvasSettingState.rect.x + window.pageXOffset)) /
                     canvasSettingState.canvasSizeMagnification,
                 Y:
-                    (wholeCoor.Y - canvasSettingState.rect.top) /
+                    (wholeCoor.Y -
+                        (canvasSettingState.rect.y + window.pageYOffset)) /
                     canvasSettingState.canvasSizeMagnification,
             };
             return coor;
@@ -316,7 +360,7 @@ export default defineComponent({
                 return;
             }
             // キャンバス内におけるXY座標を取得
-            const coor: Point = getMousePoint({ X: e.clientX, Y: e.clientY });
+            const coor: Point = getMousePoint({ X: e.pageX, Y: e.pageY });
             // ドットのグリッド座標を更新
             getCanvasCell(coor);
             // 描画
@@ -362,7 +406,7 @@ export default defineComponent({
                     drawLine(pointState.beforePointed, pointState.pointed);
                     break;
                 case 'bucket':
-                    // FIXME: バケツ中にドラッグしても何も起きない
+                    // TODO: バケツ中にドラッグしても何も起きない
                     break;
             }
         };
@@ -645,6 +689,22 @@ export default defineComponent({
             afterDraw();
         };
 
+        // パレットメニューの開閉
+        const palletTranslate = (): void => {
+            if (!FraggerState.pageActive) {
+                return;
+            }
+            FraggerState.palletDrawerFlag = !FraggerState.palletDrawerFlag;
+        };
+
+        // パレットメニュー閉じる
+        const palletClose = (): void => {
+            if (!FraggerState.pageActive) {
+                return;
+            }
+            FraggerState.palletDrawerFlag = false;
+        };
+
         // 画像保存ページへの遷移
         const imageSave = (): void => {
             // canvasのインデックスデータとパレットデータ、ストアの諸データをストアへ入れなおす
@@ -690,6 +750,8 @@ export default defineComponent({
             redraw,
             clockRotate,
             antiClockRotate,
+            palletTranslate,
+            palletClose,
             // End
             imageSave,
         };
@@ -707,5 +769,14 @@ export default defineComponent({
         top: 0px;
         left: 0px;
     }
+}
+.selected {
+    margin: 2px;
+    width: 23px;
+    height: 23px;
+    border: 2px solid rgb(87, 56, 84);
+}
+body {
+    overflow: clip;
 }
 </style>

@@ -1,7 +1,8 @@
 <template>
-    <v-row dense class="palletarea">
-        <v-layout justify-center>
+    <v-row dense class="palletArea">
+        <v-layout justify-center class="palletitem">
             <pallet
+                class="palletitem"
                 v-for="(item, index) in colorPallet"
                 :key="item"
                 :color="item"
@@ -39,7 +40,7 @@ export default class PalletArea extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-.palletarea {
+.palletArea {
     display: inline-block;
     white-space: nowrap;
     justify-content: space-between;

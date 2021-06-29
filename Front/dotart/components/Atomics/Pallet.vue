@@ -27,8 +27,8 @@ export default class Pallet extends Vue {
     selectedIndex!: number;
 
     margin: string = '2px';
-    width: string = '23px';
-    height: string = '23px';
+    width: string = '26px';
+    height: string = '26px';
     border: string = '2px solid rgb(87, 56, 84)';
 
     selectedflg: boolean = false;
@@ -36,8 +36,8 @@ export default class Pallet extends Vue {
     public mounted(): void {
         if (this.selectedIndex === this.index) {
             this.margin = '1px';
-            this.width = '25px';
-            this.height = '25px';
+            this.width = '28px';
+            this.height = '28px';
             this.border = '3px solid rgb(235, 146, 227)';
         }
     }
@@ -46,13 +46,13 @@ export default class Pallet extends Vue {
     public checkSelected(newIndex: number, _oldIndex: number) {
         if (newIndex === this.index) {
             this.margin = '1px';
-            this.width = '25px';
-            this.height = '25px';
+            this.width = '28px';
+            this.height = '28px';
             this.border = '3px solid rgb(235, 146, 227)';
         } else {
             this.margin = '2px';
-            this.width = '23px';
-            this.height = '23px';
+            this.width = '26px';
+            this.height = '26px';
             this.border = '2px solid rgb(87, 56, 84)';
         }
     }
