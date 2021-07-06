@@ -14,12 +14,37 @@
     </svg>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator';
-@Component
-export default class IconBase extends Vue {
-    @Prop({ default: '' }) iconName!: string;
-    @Prop({ default: '32' }) width!: string;
-    @Prop({ default: '32' }) height!: string;
-    @Prop({ default: 'currentColor' }) iconColor!: string;
-}
+import { defineComponent, onMounted } from '@nuxtjs/composition-api';
+
+export default defineComponent({
+    name: 'IconBase',
+    components: {},
+    props: {
+        iconName: {
+            type: String,
+            required: true,
+            default: '',
+        },
+        iconColor: {
+            type: String,
+            required: true,
+            default: 'currentColor',
+        },
+        width: {
+            type: String,
+            required: true,
+            default: '32',
+        },
+        height: {
+            type: String,
+            required: true,
+            default: '32',
+        },
+    },
+    setup() {
+        onMounted(() => {
+            console.log('IconBase');
+        });
+    },
+});
 </script>

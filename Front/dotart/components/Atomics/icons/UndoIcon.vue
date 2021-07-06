@@ -11,7 +11,9 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'nuxt-property-decorator';
-@Component({})
-export default class UndoIcon extends Vue {}
+import { defineComponent } from '@nuxtjs/composition-api';
+
+export default defineComponent({
+    name: 'UndoIcon',
+});
 </script>

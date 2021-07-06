@@ -20,6 +20,7 @@
 </template>
 
 <script lang="ts">
+// TODO: 本実装する際にcompotisionApiにする
 import { Component, Vue } from 'nuxt-property-decorator';
 
 @Component({})
