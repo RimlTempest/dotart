@@ -24,14 +24,10 @@
                                     @touchend="onDragEnd"
                                 ></canvas>
                             </div>
-                        </div> -->
+                        </div>-->
                         <div class="DrowCanvas">
                             <div class="DrowCanvas__Draw">
-                                <canvas
-                                    id="drowcanvas"
-                                    width="384px"
-                                    height="384px"
-                                ></canvas>
+                                <canvas id="drowcanvas" width="384px" height="384px"></canvas>
                             </div>
                             <div class="DrowCanvas__Grid">
                                 <canvas
@@ -73,7 +69,7 @@
                     :color-pallet="palletState.colorPallet"
                     :first-pallet-index="palletState.palletIndex"
                     :get-pallet-color="getPalletColor"
-                ></main-menu> -->
+                ></main-menu>-->
             </v-container>
         </v-flex>
     </v-layout>
@@ -233,9 +229,8 @@ export default defineComponent({
             canvasState.canvas!.style.border = '1px solid rgb(0,0,0)';
             // canvasのコンテキスト取得(グリッドの領域)
             gridCanvasState.gridCanvas = document.querySelector('#gridcanvas');
-            gridCanvasState.gridCanvasCtx = gridCanvasState.gridCanvas!.getContext(
-                '2d'
-            );
+            gridCanvasState.gridCanvasCtx =
+                gridCanvasState.gridCanvas!.getContext('2d');
             // サイズの変更、枠線の追加
             gridCanvasState.gridCanvas!.style.width =
                 canvasSettingState.canvasStyleSize + 'px';
@@ -280,13 +275,16 @@ export default defineComponent({
         // クリック、タッチした位置のキャンパスにおけるXY座標を返す
         // 引数はマウスの座標
         const getMousePoint = (wholeCoor: Point): Point => {
-            canvasSettingState.rect = canvasState.canvas!.getBoundingClientRect();
+            canvasSettingState.rect =
+                canvasState.canvas!.getBoundingClientRect();
             const coor: Point = {
                 X:
-                    (wholeCoor.X - canvasSettingState.rect.left) /
+                    (wholeCoor.X -
+                        (canvasSettingState.rect.x + window.pageXOffset)) /
                     canvasSettingState.canvasSizeMagnification,
                 Y:
-                    (wholeCoor.Y - canvasSettingState.rect.top) /
+                    (wholeCoor.Y -
+                        (canvasSettingState.rect.y + window.pageYOffset)) /
                     canvasSettingState.canvasSizeMagnification,
             };
             return coor;
@@ -351,7 +349,7 @@ export default defineComponent({
                 return;
             }
             // キャンバス内におけるXY座標を取得
-            const coor: Point = getMousePoint({ X: e.clientX, Y: e.clientY });
+            const coor: Point = getMousePoint({ X: e.pageX, Y: e.pageY });
             // ドットのグリッド座標を更新
             getCanvasCell(coor);
             // 描画
