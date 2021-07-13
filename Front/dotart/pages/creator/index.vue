@@ -6,9 +6,7 @@
                     <v-col cols="12">
                         <v-card light hover max-width="1000" class="card">
                             <v-form ref="form" lazy-validation>
-                                <v-card-title class="card"
-                                    >ドット絵作成</v-card-title
-                                >
+                                <v-card-title class="card">ドット絵作成</v-card-title>
                             </v-form>
                         </v-card>
                     </v-col>
@@ -16,16 +14,9 @@
                     <v-col cols="12">
                         <v-card light hover max-width="1000" class="card">
                             <v-form ref="form" lazy-validation>
-                                <v-card-title class="headline"
-                                    >キャンバス名</v-card-title
-                                >
-                                <v-card-subtitle
-                                    >保存するときの名前です</v-card-subtitle
-                                >
-                                <v-text-field
-                                    v-model="palletState.canvasName"
-                                    label="キャンバス名"
-                                />
+                                <v-card-title class="headline">キャンバス名</v-card-title>
+                                <v-card-subtitle>保存するときの名前です</v-card-subtitle>
+                                <v-text-field v-model="palletState.canvasName" label="キャンバス名" />
                             </v-form>
                         </v-card>
                     </v-col>
@@ -33,21 +24,19 @@
                     <v-col cols="12">
                         <v-card light hover max-width="1000" class="card">
                             <v-form ref="form" lazy-validation>
-                                <v-card-title class="headline"
-                                    >パレット選択</v-card-title
-                                >
-                                <v-card-subtitle
-                                    >使うパレットを選びましょう</v-card-subtitle
-                                >
+                                <v-card-title class="headline">パレット選択</v-card-title>
+                                <v-card-subtitle>使うパレットを選びましょう</v-card-subtitle>
                                 <v-select
                                     v-model="palletState.selectedPallet"
                                     :items="itemState.palletListItems"
                                     label="パレット"
                                     return-object
                                 ></v-select>
-                                <small>{{
+                                <small>
+                                    {{
                                     palletState.selectedPallet['summary']
-                                }}</small>
+                                    }}
+                                </small>
                                 <div class="palletPreview">
                                     <div
                                         v-for="item in palletState
@@ -64,12 +53,8 @@
                     <v-col cols="12">
                         <v-card light hover max-width="1000" class="card">
                             <v-form ref="form" lazy-validation>
-                                <v-card-title class="headline"
-                                    >キャンバスサイズ指定</v-card-title
-                                >
-                                <v-card-subtitle
-                                    >キャンバスサイズを決めましょう</v-card-subtitle
-                                >
+                                <v-card-title class="headline">キャンバスサイズ指定</v-card-title>
+                                <v-card-subtitle>キャンバスサイズを決めましょう</v-card-subtitle>
                                 <v-select
                                     v-model="palletState.selectedSize"
                                     :items="itemState.sizeListItems"
@@ -81,17 +66,12 @@
                                     <v-btn color="primary" @click="startDraw"
                                         >作成する</v-btn
                                     >
-                                </v-card-actions> -->
+                                </v-card-actions>-->
                             </v-form>
                         </v-card>
                     </v-col>
                     <v-col cols="12" style="text-align: center">
-                        <v-btn
-                            color="primary"
-                            class="createButton"
-                            @click="startDraw"
-                            >作成する</v-btn
-                        >
+                        <v-btn color="primary" class="createButton" @click="startDraw">作成する</v-btn>
                     </v-col>
                 </v-row>
             </v-container>
@@ -221,7 +201,12 @@ export default defineComponent({
         });
 
         const startDraw = (): void => {
-            // お絵描きページへ遷移
+            //セッションストレージ全消し
+            //一部消すようにしたかったら↓使ってね
+            //sessionStorage.removeItem("")
+            sessionStorage.clear();
+            //セッションストレージに各種項目を設定
+            CanvasDataModule.setReset();
             CanvasDataModule.setCanvasName(palletState.canvasName);
             CanvasDataModule.setCanvasRange(palletState.selectedSize.range);
             CanvasDataModule.setCanvasMagnification(
@@ -229,6 +214,7 @@ export default defineComponent({
             );
             CanvasDataModule.setPalletName(palletState.selectedPallet.text);
             CanvasDataModule.setPalletColor(palletState.selectedPallet.pallet);
+            // お絵描きページへ遷移
             router.push('/creator/canvas');
             // this.$router.push('/creator/canvas');
         };
