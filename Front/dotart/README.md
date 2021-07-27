@@ -15,6 +15,9 @@ $ yarn dev
 $ yarn build
 $ yarn start
 
+# Storybook  
+$ yarn sb
+
 # generate static project
 $ yarn generate
 ```
