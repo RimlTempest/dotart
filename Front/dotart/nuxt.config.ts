@@ -1,4 +1,4 @@
-import { Configuration } from '@nuxt/types';
+import { NuxtConfig } from '@nuxt/types';
 import colors from 'vuetify/es5/util/colors';
 import { Auth } from 'nuxtjs__auth';
 
@@ -9,8 +9,8 @@ declare module 'vue/types/vue' {
 }
 
 const manifestIcon = 'static/icon.png';
-const nuxtConfig: Configuration = {
-    mode: 'spa',
+const nuxtConfig: NuxtConfig = {
+    ssr: false,
     /*
      ** Headers of the page
      */
@@ -186,6 +186,9 @@ const nuxtConfig: Configuration = {
                 },
             },
         },
+    },
+    storybook: {
+        // Options
     },
     env: {
         APP_NAME: String(process.env.npm_package_name),
