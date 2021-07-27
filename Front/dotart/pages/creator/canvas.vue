@@ -93,8 +93,8 @@ import {
 import { Point } from '@/types/Canvas/PointType';
 import { Stack } from '@/types/Canvas/StackType';
 import { CanvasDataModule } from '@/store/modules/canvasData';
-import ButtonArea from '@/components/Molecules/ButtonArea.vue';
-import PalletArea from '@/components/Molecules/PalletArea.vue';
+import ButtonArea from '@/components/molecules/ButtonArea.vue';
+import PalletArea from '@/components/molecules/PalletArea.vue';
 // import MainMenu from '@/components/Organisms/MainMenu.vue';
 
 export default defineComponent({

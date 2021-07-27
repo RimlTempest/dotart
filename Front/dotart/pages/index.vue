@@ -27,9 +27,9 @@ import {
     onMounted,
     reactive,
 } from '@nuxtjs/composition-api';
-import Hero from '../components/Home/Hero.vue';
-import About from '../components/Home/About.vue';
-import Info from '../components/Home/Info.vue';
+import Hero from '@/components/home/Hero.vue';
+import About from '@/components/home/About.vue';
+import Info from '@/components/home/Info.vue';
 
 type Cards = {
     title: string;
