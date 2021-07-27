@@ -71,6 +71,7 @@ class CanvasData extends VuexModule implements CanvasDataState {
         this.canvasMagnification = 0;
         this.canvasRange = 0;
         this.canvasName = 'newcanvas';
+        this.canvasIndexData = [];
     }
 
     // stateに向けての値の処理
